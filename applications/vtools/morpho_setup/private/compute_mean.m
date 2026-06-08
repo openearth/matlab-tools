@@ -27,8 +27,18 @@ for krkm=1:nrkm
 % for krkm=1:27
     rkm_q=rkm_cen(krkm); %query rkm (any) at which to compute the mean
     rkm_mod=rkm_of_pol(rkm_q,br); %rkm to modify. Along a certain branch closest to the query rkm. 
-    br_mod_str=branch_rijntakken(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
-    [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str{1},dist(krkm)); %rkm and branch to compute the mean
+
+    %V: I think the line below is not needed anymore and causes problems. The issue is that the output is the branch
+    %for a certain rkm. E.g., for 878 and branch Nederijn (`br=NR`), it yields it is in the Pannerdensche Kanaal (`PK`).
+    %then, a vector of points to do the average will be created, and in all of them we will enforce that the branch is `PK`, 
+    %which is not correct, as the point may lay the branch upstream or downstream of the `PK` branch. The correct branch
+    %is already enforced in `get_pol_along_line`->`branch_str_num`->`branch_rijntakken`, where the branch is determined
+    %for each point to do the average.
+    %
+    %br_mod_str=branch_rijntakken(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
+    % [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str{1},dist(krkm)); %rkm and branch to compute the mean
+
+    [rkm_me,br_me]=get_pol_along_line(rkm_q,br,dist(krkm)); %rkm and branch to compute the mean
     
     bol_rkm_me=ismember_num(rkm_pol_num,rkm_me,tol_rkm); %boolean of the rkm to compute the mean
     bol_br_me=ismember(br_pol_num,br_me); %boolean of the branch to compute the mean
