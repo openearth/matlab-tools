@@ -28,15 +28,19 @@ function D3D_crosssectiondefinitions(simdef,varargin)
 
 parin=inputParser;
 
-addOptional(parin,'check_existing',true)
+addOptional(parin,'check_existing',true) %deprecated, use 'overwrite' instead
+addOptional(parin,'overwrite',false)
 addOptional(parin,'fname','CrossSectionDefinitions.ini')
 addOptional(parin,'csd_global',NaN)
 
 parse(parin,varargin{:})
 
 check_existing=parin.Results.check_existing;
+overwrite=parin.Results.overwrite;
 fname=parin.Results.fname;
 csd_global=parin.Results.csd_global;
+
+overwrite=overwrite || ~check_existing;
 
 %% RENAME
 
@@ -52,7 +56,7 @@ ncsd=numel(csd);
 %% FILE
 
 fname_destiny=fullfile(dire_sim,fname);
-[fid,fname_local]=write_local_and_copy('open',fname_destiny,'overwrite',~check_existing);
+[fid,fname_local]=write_local_and_copy('open',fname_destiny,'overwrite',overwrite);
 
 fprintf(fid,'%s\r\n','[General]');
 fprintf(fid,'%s\r\n','   fileVersion           = 3.00');
