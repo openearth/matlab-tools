@@ -55,6 +55,8 @@
 %            .id           unique string ID
 %            .branchId     branch identifier (from shapefile CS_BrName)
 %            .chainage     distance along branch [m]
+%            .x            optional map x-coordinate [m], if available
+%            .y            optional map y-coordinate [m], if available
 %            .shift        0
 %            .definitionId reference to the matching csd.id
 
@@ -144,11 +146,10 @@ end
 
 has_shp = ~isempty(fpath_cs_shp);
 if has_shp
-    [fdir_shp, fname_shp, ~] = fileparts(fpath_cs_shp);
-    fpath_dbf = fullfile(fdir_shp, [fname_shp '.dbf']);
-    shp_attrs = read_dbf_attrs(fpath_dbf);
+    [shp_attrs, shp_xy] = read_shp_with_D3D_io_input(fpath_cs_shp, fid_log);
 else
     shp_attrs = struct();
+    shp_xy = {};
     log_printf(fid_log, 'read_CS_MIKE11: no shapefile provided, branchId defaults to TXT branch names.\n');
 end
 
@@ -205,8 +206,17 @@ for kcs = 1:ncs
     csl(kcs).id           = loc_id;
     csl(kcs).branchId     = branch_id;
     csl(kcs).chainage     = sec.chainage;
+    [sec_x, sec_y] = lookup_xy(sec, shp_attrs, shp_xy);
+    csl(kcs).x            = sec_x;
+    csl(kcs).y            = sec_y;
     csl(kcs).shift        = 0;
     csl(kcs).definitionId = def_id;
+
+    if ~isfinite(sec_x) || ~isfinite(sec_y)
+        log_printf(fid_log, ['read_CS_MIKE11: warning missing XY for section ' ...
+            '(branch=%s, chainage=%8.3f, section=%g).\n'], ...
+            sec.branch, sec.chainage, sec.section_id);
+    end
 
     if isnan(sec.section_id)
         sid_str = 'no-id';
@@ -442,7 +452,8 @@ end
 
 if isempty(block_starts)
     sections = struct('topo_id',{},'branch',{},'chainage',{},'section_id',{}, ...
-        'y',{},'z',{},'code',{},'zw_level_file',{},'zw_width_file',{}, ...
+        'x_coord',{},'y_coord',{},'y',{},'z',{},'code',{}, ...
+        'zw_level_file',{},'zw_width_file',{}, ...
         'y_raw',{},'z_raw',{},'code_raw',{},'y_removed',{},'z_removed',{});
     return
 end
@@ -453,7 +464,8 @@ nblocks = numel(block_starts);
 
 % Pre-allocate with empty defaults
 empty_sec = struct('topo_id',NaN,'branch','','chainage',NaN,'section_id',NaN, ...
-    'y',[],'z',[],'code',[],'zw_level_file',[],'zw_width_file',[], ...
+    'x_coord',NaN,'y_coord',NaN,'y',[],'z',[],'code',[], ...
+    'zw_level_file',[],'zw_width_file',[], ...
     'y_raw',[],'z_raw',[],'code_raw',[],'y_removed',[],'z_removed',[]);
 sections(nblocks, 1) = empty_sec;
 for kb = 1:nblocks
@@ -480,6 +492,30 @@ for kb = 1:nblocks
             sid_str = strtrim(blk{kl + 1});
             if ~isempty(sid_str)
                 sections(kb).section_id = str2double(sid_str);
+            end
+
+        elseif strcmpi(kw, 'COORDINATES')
+            for kd = kl + 1:nbl
+                row_str = strtrim(blk{kd});
+                if isempty(row_str)
+                    continue
+                end
+                if startsWith(row_str, '*') || ...
+                        strcmpi(row_str, 'DATUM') || ...
+                        strcmpi(row_str, 'FLOW DIRECTION') || ...
+                        strcmpi(row_str, 'PROTECT DATA') || ...
+                        startsWith(upper(row_str), 'PROFILE') || ...
+                        strcmpi(row_str, 'SECTION ID') || ...
+                        strcmpi(row_str, 'PROCESSED DATA')
+                    break
+                end
+
+                vals = sscanf(row_str, '%f');
+                if numel(vals) >= 2
+                    sections(kb).x_coord = vals(1);
+                    sections(kb).y_coord = vals(2);
+                    break
+                end
             end
 
         elseif strcmpi(kw, 'PROCESSED DATA')
@@ -697,6 +733,184 @@ if min_diff <= tol_ch
 end
 
 end %function lookup_branch
+
+%% =========================================================================
+
+function [x_coord, y_coord] = lookup_xy(sec, shp_attrs, shp_xy)
+%LOOKUP_XY  Return map x/y for a parsed TXT section when available.
+%
+%  Strategy:
+%   1. Use COORDINATES parsed from TXT block.
+%   2. Fallback to shapefile DBF x/y-like fields, matched by section ID.
+%   3. Fallback to shapefile polyline midpoint from D3D_io_input geometry.
+
+x_coord = NaN;
+y_coord = NaN;
+
+if isfield(sec,'x_coord') && isfield(sec,'y_coord') && ...
+        isfinite(sec.x_coord) && isfinite(sec.y_coord)
+    x_coord = sec.x_coord;
+    y_coord = sec.y_coord;
+    return
+end
+
+if isempty(fieldnames(shp_attrs))
+    return
+end
+
+idx = lookup_shp_record_index(sec, shp_attrs);
+if ~isfinite(idx)
+    return
+end
+
+x_field = find_dbf_field(shp_attrs, {'CS_X','X','XCOORD','X_COORD','EASTING'});
+y_field = find_dbf_field(shp_attrs, {'CS_Y','Y','YCOORD','Y_COORD','NORTHING'});
+
+if ~isempty(x_field)
+    x_val = str2double(shp_attrs.(x_field){idx});
+    if isfinite(x_val)
+        x_coord = x_val;
+    end
+end
+if ~isempty(y_field)
+    y_val = str2double(shp_attrs.(y_field){idx});
+    if isfinite(y_val)
+        y_coord = y_val;
+    end
+end
+
+if (~isfinite(x_coord) || ~isfinite(y_coord)) && ~isempty(shp_xy) && idx <= numel(shp_xy)
+    [x_geo, y_geo] = polyline_midpoint_xy(shp_xy{idx});
+    if isfinite(x_geo) && isfinite(y_geo)
+        x_coord = x_geo;
+        y_coord = y_geo;
+    end
+end
+
+end %function lookup_xy
+
+%% =========================================================================
+
+function idx = lookup_shp_record_index(sec, shp_attrs)
+%LOOKUP_SHP_RECORD_INDEX  Find matching DBF record index for a TXT section.
+
+idx = NaN;
+
+if ~isfield(shp_attrs,'CS_ID') || ~isfield(shp_attrs,'CS_Ch')
+    return
+end
+
+n_shp = numel(shp_attrs.CS_ID);
+
+if ~isnan(sec.section_id)
+    for ks = 1:n_shp
+        cs_id_num = str2double(shp_attrs.CS_ID{ks});
+        if ~isnan(cs_id_num) && cs_id_num == sec.section_id
+            idx = ks;
+            return
+        end
+    end
+end
+
+ch_shp = cellfun(@str2double, shp_attrs.CS_Ch);
+[min_diff, idx_min] = min(abs(ch_shp - sec.chainage));
+if min_diff <= 1
+    idx = idx_min;
+end
+
+end %function lookup_shp_record_index
+
+%% =========================================================================
+
+function fname = find_dbf_field(shp_attrs, candidate_names)
+%FIND_DBF_FIELD  Find first matching DBF attribute name (case-insensitive).
+
+fname = '';
+all_names = fieldnames(shp_attrs);
+
+for k = 1:numel(candidate_names)
+    km = find(strcmpi(all_names, candidate_names{k}), 1, 'first');
+    if ~isempty(km)
+        fname = all_names{km};
+        return
+    end
+end
+
+end %function find_dbf_field
+
+%% =========================================================================
+
+function [shp_attrs, shp_xy] = read_shp_with_D3D_io_input(fpath_cs_shp, fid_log)
+%READ_SHP_WITH_D3D_IO_INPUT  Read shapefile geometry+attributes via D3D_io_input.
+
+shp_attrs = struct();
+shp_xy = {};
+
+shp_in = D3D_io_input('read', fpath_cs_shp, 'read_val', true);
+
+if isfield(shp_in,'xy') && isstruct(shp_in.xy) && isfield(shp_in.xy,'XY')
+    shp_xy = shp_in.xy.XY;
+end
+
+if isfield(shp_in,'val_names') && isfield(shp_in,'val')
+    ncol = min(numel(shp_in.val_names), numel(shp_in.val));
+    for kc = 1:ncol
+        raw_name = shp_in.val_names{kc};
+        if isstring(raw_name)
+            raw_name = char(raw_name);
+        end
+        if ~ischar(raw_name)
+            continue
+        end
+
+        tok = regexp(raw_name, ':', 'split');
+        fld = strtrim(tok{end});
+        if isempty(fld)
+            continue
+        end
+
+        col = shp_in.val{kc};
+        if ~isstruct(col) || ~isfield(col,'Val')
+            continue
+        end
+        shp_attrs.(fld) = col.Val;
+    end
+end
+
+if isempty(fieldnames(shp_attrs))
+    [fdir_shp, fname_shp, ~] = fileparts(fpath_cs_shp);
+    fpath_dbf = fullfile(fdir_shp, [fname_shp '.dbf']);
+    shp_attrs = read_dbf_attrs(fpath_dbf);
+    log_printf(fid_log, ['read_CS_MIKE11: D3D_io_input returned no attributes; ' ...
+        'fallback to DBF parser for %s.\n'], fpath_dbf);
+end
+
+end %function read_shp_with_D3D_io_input
+
+%% =========================================================================
+
+function [x_mid, y_mid] = polyline_midpoint_xy(xy)
+%POLYLINE_MIDPOINT_XY  Midpoint between first and last valid polyline vertex.
+
+x_mid = NaN;
+y_mid = NaN;
+
+if isempty(xy) || ~isnumeric(xy) || size(xy,2) < 2
+    return
+end
+
+good = isfinite(xy(:,1)) & isfinite(xy(:,2));
+xy = xy(good,:);
+if isempty(xy)
+    return
+end
+
+p1 = xy(1,1:2);
+p2 = xy(end,1:2);
+x_mid = 0.5 * (p1(1) + p2(1));
+y_mid = 0.5 * (p1(2) + p2(2));
+
+end %function polyline_midpoint_xy
 
 %% =========================================================================
 
