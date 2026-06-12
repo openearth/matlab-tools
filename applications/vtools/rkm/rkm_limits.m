@@ -18,7 +18,7 @@ switch lower(tag)
     case {'maastricht-linne','mali'}
         rkm=[3,69];
     case {'lixhe-roermond','liro'}
-        rkm=[2,83];
+        rkm=[3,81];
     case {'borgharen-linne','bl'}
         rkm=[15,69];
     case {'linne-roermond','lr'}
