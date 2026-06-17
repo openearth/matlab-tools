@@ -163,8 +163,10 @@ log_printf(fid_log, 'read_CS_MIKE11: reading %d cross-sections...\n', ncs);
 for kcs = 1:ncs
     sec = sections(kcs);
 
-    def_id = sprintf('CS_%04d', kcs);
-    loc_id = sprintf('CSL_%04d', kcs);
+    def_id = sprintf('CSD_%s_%.0f', sec.branch, sec.chainage);
+    loc_id = sprintf('CSL_%s_%.0f', sec.branch, sec.chainage);
+    % def_id = sprintf('CS_%04d', kcs);
+    % loc_id = sprintf('CSL_%04d', kcs);
 
     % Build both zw sources and then select the csd source by mode.
     [lev_yz, fw_yz] = yz_to_zw(sec.y, sec.z, fid_log);
@@ -181,7 +183,7 @@ for kcs = 1:ncs
     csd(kcs).levels      = lev;     % row vector
     csd(kcs).flowWidths  = fw;      % row vector
     csd(kcs).totalWidths = fw;      % no storage/floodplain distinction
-    csd(kcs).frictionIds = 'Main';
+    csd(kcs).frictionIds = 'Main;FloodPlain1;FloodPlain2'; %this implies that, in the mdu-file, you need `FrictFile         = roughness-Main.ini;roughness-FloodPlain1.ini;roughness-FloodPlain2.ini`
     csd(kcs).zwLevelsFromYZ = lev_yz;
     csd(kcs).zwWidthsFromYZ = fw_yz;
     csd(kcs).zwLevelsFromFile = lev_file;
@@ -198,11 +200,11 @@ for kcs = 1:ncs
     csd(kcs).widthConfidence = width_info.confidence;
 
     % Cross-section location
-    if has_shp
-        branch_id = lookup_branch(sec, shp_attrs);
-    else
+    % if has_shp
+    %     branch_id = lookup_branch(sec, shp_attrs);
+    % else
         branch_id = sec.branch;
-    end
+    % end
     csl(kcs).id           = loc_id;
     csl(kcs).branchId     = branch_id;
     csl(kcs).chainage     = sec.chainage;
@@ -1175,6 +1177,9 @@ end %function close_if_valid
 function [width_info, manual_state] = compute_widths(sec, levels, widths, fid_log, manual_opts, manual_state)
 %COMPUTE_WIDTHS  Derive main-channel and floodplain widths.
 
+%In zw cross-sections, the floodplains 1 and 2 are not left and right, but sections a different elevation. For now, we join everything in floodplain 1.
+joined_floodplains = true;
+
 y = sec.y(:);
 z = sec.z(:);
 c = sec.code(:);
@@ -1321,6 +1326,11 @@ end
 main_w = max(x_right_main - x_left_main, 0);
 fp1_w = max(x_left_main - x_start, 0);
 fp2_w = max(x_end - x_right_main, 0);
+
+if joined_floodplains
+    fp1_w = fp1_w + fp2_w;
+    fp2_w = 0;
+end
 
 width_info = struct( ...
     'xMainLeft', x_left_main, ...
