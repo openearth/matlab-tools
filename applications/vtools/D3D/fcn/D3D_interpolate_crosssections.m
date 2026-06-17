@@ -66,14 +66,15 @@ end
 path_map_ori=simdef.file.map;
 
 if exist(path_csdef_ori,'file')==2
-    [~,cs_def_ori]=S3_read_crosssectiondefinitions(path_csdef_ori,'file_type',2);
+    cs_def_ori=D3D_io_input('read',path_csdef_ori);
 else
     error('Cannot access file: %s',path_csdef_ori);
 end
 check_fields_struct(cs_def_ori,{'levels','flowWidths','totalWidths','mainWidth','fp1Width','fp2Width'});
 
 if exist(path_csloc_ori,'file')==2
-    [~,cs_loc_ori]=S3_read_crosssectiondefinitions(path_csloc_ori,'file_type',3);
+
+    cs_loc_ori=D3D_io_input('read',path_csloc_ori);
 else
     error('Cannot access file: %s',path_csloc_ori);
 end

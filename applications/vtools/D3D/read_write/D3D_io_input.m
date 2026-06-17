@@ -138,11 +138,15 @@ switch what_do
                 % INI=inifile('open','c:\projects\ag\models\r007\structures.ini');
                 % a=inifile('getstringi', INI, 'structure', 'id'); %get all the `id` of the chapters called `structure`
 
-                stru_out=delft3d_io_sed(fname);
-                inifiletype=parse_ini(stru_out,parameters);
-                if any(inifiletype==[parameters.INIFILE_CRSDEF,parameters.INIFILE_CRSLOC])
-                    [~,stru_out]=S3_read_crosssectiondefinitions(fname,'file_type',inifiletype);
-                end
+                % stru_out=delft3d_io_sed(fname);
+                % inifiletype=parse_ini(stru_out,parameters);
+                % if any(inifiletype==[parameters.INIFILE_CRSDEF,parameters.INIFILE_CRSLOC])
+                %     [~,stru_out]=S3_read_crosssectiondefinitions(fname,'file_type',inifiletype);
+                % end
+
+                %In second argument there is the global data
+                [stru_out,global_data]=D3D_read_crosssections(fname);
+                varargout{2}=global_data;
             case '.grd'
                 OPT.nodatavalue=NaN;
                 stru_out=delft3d_io_grd('read',fname,OPT);
