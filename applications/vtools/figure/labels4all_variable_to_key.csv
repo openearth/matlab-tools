@@ -129,6 +129,7 @@ ba_mor,morphodynamic_cell_area
 ba,cell_area
 ba/b,width
 ba_mor/b,width
+b,width
 t_da,depth_average_residence_time
 t_surf,surface_residence_time
 t_max,maximum_residence_time

@@ -86,6 +86,12 @@ if in_plot_fig.do
     end
 end
 
+%% CRS (cross-section 1D)
+in_plot_fig=gdm_check_tag_CRS(in_plot);
+if in_plot_fig.do
+    gdm_plot_CRS(fid_log,in_plot_fig,simdef)
+end
+
 %% his sal meteo
 tag_check='fig_his_sal_meteo_01';
 if isfield(in_plot,tag_check)==1

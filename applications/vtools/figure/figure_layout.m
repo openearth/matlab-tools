@@ -376,6 +376,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 han.sfig(kr,kc).XScale=XScale;
 % han.sfig(kr,kc).YScale='log';
+title('') %create an empty title. Modify below.
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';

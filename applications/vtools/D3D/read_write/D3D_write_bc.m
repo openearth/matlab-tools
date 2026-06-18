@@ -20,7 +20,8 @@ if ~isfield(bc,'at_node')
 end
 
 %% CALC
-fid=fopen(fpath,'w');
+
+[fid,fname_local]=write_local_and_copy('open',fpath,'overwrite',true);
 
 %Necessary for GUI
 fprintf(fid,'[General] \n');
@@ -76,7 +77,6 @@ for kbc=1:nbc
     end
 end %kbc
 
-fclose(fid);
-% messageOut(NaN,sprintf('File created: %s',fpath))
+write_local_and_copy('close',fid,fname_local,fpath)
 
 end %function

@@ -99,6 +99,12 @@ if isfield(in_plot,tag_check)==1
     create_mat_map_fraction_cs_01(fid_log,in_plot_fig,simdef)
 end
 
+%% CRS (cross-section 1D)
+in_plot_fig=gdm_check_tag_CRS(in_plot);
+if in_plot_fig.do
+    create_mat_CRS(fid_log,in_plot_fig,simdef)
+end
+
 %% sal 3D (3D surface of constant salinity. This is different than a 3D view of a 2D such as bed level)
 tag_check='fig_map_sal3D_01';
 if isfield(in_plot,tag_check)==1

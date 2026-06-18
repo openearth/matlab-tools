@@ -34,12 +34,14 @@ else %pair-value arguments
     addOptional(parin,'check_existing',true);
     addOptional(parin,'overwrite',NaN);
     addOptional(parin,'fdir','');
+    addOptional(parin,'n_levels',NaN); %nan->maximum number of levels in the original cross-section definitions. If a number is provided, it will be used as the number of levels in the new cross-section definitions.
 
     parse(parin,varargin{:});
 
     check_existing=parin.Results.check_existing;
     overwrite=parin.Results.overwrite;
     fdir_new=parin.Results.fdir;
+    n_levels=parin.Results.n_levels;
     
     if ~isnan(overwrite)
         check_existing=~overwrite;
@@ -85,7 +87,11 @@ end
 
 %% CALC
 
-nelev_cs=max([cs_def_ori.numLevels]); %number of points to interpolate the new elevation 
+if isnan(n_levels)
+    nelev_cs=max([cs_def_ori.numLevels]); %number of points to interpolate the new elevation 
+else
+    nelev_cs=n_levels;
+end
 
 mesh1d_node_offset=ncread(path_map_ori,'mesh1d_node_offset');
 mesh1d_node_branch=ncread(path_map_ori,'mesh1d_node_branch');
