@@ -35,6 +35,7 @@ else %pair-value arguments
     addOptional(parin,'overwrite',NaN);
     addOptional(parin,'fdir','');
     addOptional(parin,'n_levels',NaN); %nan->maximum number of levels in the original cross-section definitions. If a number is provided, it will be used as the number of levels in the new cross-section definitions.
+    addOptional(parin,'main_width_method','interpolate'); %method to calculate the main channel width. Options: 'interpolate' (default) or 'max'. If 'interpolate', the main channel width is interpolated in chainage. If 'max', the maximum value of the main channel width is used.
 
     parse(parin,varargin{:});
 
@@ -42,7 +43,8 @@ else %pair-value arguments
     overwrite=parin.Results.overwrite;
     fdir_new=parin.Results.fdir;
     n_levels=parin.Results.n_levels;
-    
+    flg.main_width_method=parin.Results.main_width_method;
+
     if ~isnan(overwrite)
         check_existing=~overwrite;
     end
@@ -186,7 +188,7 @@ for kn=1:nn
     ch_l=mesh1d_node_offset(kn); %local chainage
     cs_id_l=cs_name(br_l,ch_l);
     
-    [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
+    [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(flg,ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
 
     %definition
     cs_def_upd(kn)=cs_def_ref; %copy original
@@ -217,7 +219,6 @@ end
 kn=nn; %last one
 for kb=1:nb
     
-    
     br_l=strtrim(network1d_branch_id(kb,:)); %branch name
     
     %loop upstream and downstream
@@ -234,7 +235,7 @@ for kb=1:nb
         if ~isnan(idx_loc); continue; end %if it already exists we do not add it
         
         %data to add
-        [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
+        [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(flg,ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
     
         %update
         kn=kn+1;
@@ -301,7 +302,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width)
+function [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(flg,ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width)
 
 %2DO: I could group between the function that require interpolation in chainage only and the ones that require
 %interpolation in both chainage and elevation. Then we simply loop through the functions generically and we do not
@@ -322,6 +323,14 @@ relative_levels=cumsum([0;diff(lev_i)]);
 flowWidths_i =F_flowWidths {idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 totalWidths_i=F_totalWidths{idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 
+%method for main channel width
+switch flg.main_width_method
+    case 'interpolate'
+        % mainWidth_i=F_mainWidth{idx_br,1}(ch_l); %interpolate main width
+    case 'max'
+        mainWidth_i=max(flowWidths_i); %use maximum main width
+end
+
 %guarantee monotonicity
 if ~mono_increase(flowWidths_i)
     flowWidths_i=make_monotonous(lev_i,flowWidths_i);
@@ -337,6 +346,7 @@ if fp2Width_i<0
     fp1Width_i=max(flowWidths_i)-mainWidth_i;
 end
 if fp1Width_i<0
+    fp2Width_i=0;
     fp1Width_i=0;
     mainWidth_i=max(flowWidths_i);
 end
@@ -387,7 +397,7 @@ for kbif=1:nbif
         end
         
         br_l=cs_loc_ds.branchId;
-        [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
+        [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(flg,ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
     
         %add
         kn=kn+1;
