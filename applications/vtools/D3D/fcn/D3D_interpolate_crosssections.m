@@ -169,7 +169,6 @@ for kb=1:nb
     F_flowWidths{kb,1}=scatteredInterpolant(chain_v,level_v,flowWidths_v,'linear','nearest');
     F_totalWidths{kb,1}=scatteredInterpolant(chain_v,level_v,totalWidths_v,'linear','nearest');
     
-
 end %kb
 
 %% loop on mesh nodes (i.e., cell centres)
@@ -309,13 +308,32 @@ min_lev_i  =F_min      {idx_br,1}(ch_l); %interpolate minimum elevation
 max_lev_i  =F_max      {idx_br,1}(ch_l); %interpolate maximum elevation
 mainWidth_i=F_mainWidth{idx_br,1}(ch_l); %interpolate main width
 fp1Width_i =F_fp1Width {idx_br,1}(ch_l); %interpolate fp1
-fp2Width_i =F_fp2Width {idx_br,1}(ch_l); %interpolate fp1
+fp2Width_i =F_fp2Width {idx_br,1}(ch_l); %interpolate fp2
 
 %interpolation in elevation
 lev_i=linspace(min_lev_i,max_lev_i,nelev_cs)';
 relative_levels=cumsum([0;diff(lev_i)]);
 flowWidths_i =F_flowWidths {idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 totalWidths_i=F_totalWidths{idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
+
+%guarantee monotonicity
+if ~mono_increase(flowWidths_i)
+    flowWidths_i=make_monotonous(lev_i,flowWidths_i);
+end
+if ~mono_increase(totalWidths_i)
+    totalWidths_i=make_monotonous(lev_i,totalWidths_i);
+end
+
+%make sure widths add up
+fp2Width_i=max(flowWidths_i)-mainWidth_i-fp1Width_i;
+if fp2Width_i<0
+    fp2Width_i=0;
+    fp1Width_i=max(flowWidths_i)-mainWidth_i;
+end
+if fp1Width_i<0
+    fp1Width_i=0;
+    mainWidth_i=max(flowWidths_i);
+end
 
 end %funtion
 
