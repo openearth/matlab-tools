@@ -45,8 +45,10 @@ flg_loc=isfield_default(flg_loc,'do_xtv_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_xtv_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_xvallt',0);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
-flg_loc=isfield_default(flg_loc,'p_single_function_handles',{});
 flg_loc=isfield_default(flg_loc,'do_diff_t_first_time',1);
+
+flg_loc=isfield_default(flg_loc,'function_handles',{});
+flg_loc=isfield_default(flg_loc,'p_single_function_handles',flg_loc.function_handles);
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
@@ -57,7 +59,7 @@ flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_t_var');
 flg_loc=isfield_default(flg_loc,'tim_type',1);
 flg_loc=isfield_default(flg_loc,'fig_print',1);
 flg_loc=isfield_default(flg_loc,'str_time','yyyymmddHHMM');
-
+flg_loc=isfield_default(flg_loc,'branch_title',flg_loc.branch_name); %we should also check they are the same size
 
 %% PATHS REFERENCE
 
@@ -105,6 +107,9 @@ for kbr=1:nbr %branches
     
     branch=flg_loc.branch{kbr};
     branch_name=flg_loc.branch_name{kbr};
+    branch_title=flg_loc.branch_title{kbr};
+
+    in_p.branch_name=branch_name; %we pass it to the plotting function to be able to discern when applying ad-hoc functions. 
 
     gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name);
     
@@ -171,6 +176,7 @@ for kbr=1:nbr %branches
             end
             
             in_p.tim=time_dnum_v(kt);
+            in_p.tit_str=''; %empty so time is in title
             in_p.variable=var_str_save;
             in_p.xlims=flg_loc.xlims_var{kvar};
 
@@ -318,7 +324,7 @@ for kbr=1:nbr %branches
             in_p.y_m=y_m;
             in_p.variable=var_str_save;
             in_p.ylab_str='';
-            in_p.tit_str=branch_name;
+            in_p.tit_str=branch_title;
 
             for ksim=1:nsim
 

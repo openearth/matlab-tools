@@ -130,6 +130,17 @@ function s = encode_json_value(v,level,indentUnit)
                 level,indentUnit);
         end
 
+    elseif isa(v,'function_handle')
+
+        if isempty(v)
+            s = '[]';
+        elseif isscalar(v)
+            s = jsonencode(function_handle_to_string(v));
+        else
+            s = encode_by_shape(size(v), @(idx) jsonencode(function_handle_to_string(v(idx))), ...
+                level,indentUnit);
+        end
+
     else
 
         s = jsonencode(v);
@@ -197,6 +208,14 @@ end
 
 function s = indent(level,indentUnit)
     s = repmat(indentUnit,1,level);
+end
+
+function s = function_handle_to_string(fh)
+
+    s = func2str(fh);
+    if ~startsWith(s,'@')
+        s = ['@' s];
+    end
 end
 
 function out = encode_special_numbers_recursive(in)

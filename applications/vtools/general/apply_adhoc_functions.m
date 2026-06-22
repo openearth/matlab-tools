@@ -25,7 +25,7 @@ end
 nf=numel(function_handles);
 
 for kf=1:nf
-    function_handles{kf}();
+    function_handles{kf}(in_p);
 end %nf
 
 end %function

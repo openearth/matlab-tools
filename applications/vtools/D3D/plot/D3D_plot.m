@@ -328,7 +328,8 @@
 % in_plot.(tag).do_xtv_diff_s=1; %
 % in_plot.(tag).var={'h'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).branch{1,1}={'Channel_1D_1'}; %<open main_plot_layout>
-% in_plot.(tag).branch_name{1,1}='c1';
+% in_plot.(tag).branch_name{1,1}='c1'; %used to save files. 
+% in_plot.(tag).branch_title{1,1}='Channel 1'; %used for title in figures. Default is the same as branch name.
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_type=1;
 % in_plot.(tag).xlims=[NaN,NaN];

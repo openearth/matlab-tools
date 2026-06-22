@@ -51,7 +51,13 @@ do_load=0;
 if exist(fpath_mat_time,'file')==2 
     messageOut(fid_log,sprintf('Time-file already exists: %s',fpath_mat_time));
     load(fpath_mat_time,'tim');
-    v2struct(tim);
+    % v2struct(tim); %dangerous because it overwrites variables in the workspace. We need to be explicit.
+    time_dnum=tim.time_dnum;
+    time_mor_dnum=tim.time_mor_dnum;
+    time_idx=tim.time_idx;
+    time_dtime=tim.time_dtime;
+    time_mor_dtime=tim.time_mor_dtime;
+    sim_idx=tim.sim_idx;
 
     nt=numel(time_dnum); %number of times in the postprocessing variable. It is output, so it needs to be before the `return`
     if flg_loc.tim_just_load %debug flag to go fast

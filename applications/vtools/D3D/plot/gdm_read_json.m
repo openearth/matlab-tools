@@ -105,6 +105,11 @@ function out = decode_special_token(in)
 
     s = char(in);
 
+    if startsWith(s,'@')
+        out = str2func(s(2:end));
+        return;
+    end
+
     switch s
         case '__NaN__'
             out = NaN;
