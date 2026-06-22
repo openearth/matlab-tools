@@ -145,6 +145,12 @@ switch simdef.bcm.noise_eta
 
     case 2 %alternate bar
 
+        noise_T=simdef.bcm.noise_T;
+        if isinf(noise_T) %fixed with time
+            is_fixed_with_time=true;
+            simdef.bcm.noise_dt=simdef.mdf.Tstop; %in this way there is only one time written in the bcm-file. 
+        end
+
         time=create_time_vector(simdef);
         eta=eta.*ones(numel(time),simdef.mor.upstream_nodes); 
 
@@ -153,8 +159,12 @@ switch simdef.bcm.noise_eta
         y_in=grd.cen.y(:,1)'; %is this correct?
         B=simdef.grd.B;
         Ay=sin(pi*(y_in-B/2)./B);
-        noise_T=simdef.bcm.noise_T;
-        noise=noise_amp.*Ay.*cos(2*pi*time/noise_T-pi/2); %total noise;
+        
+        if is_fixed_with_time
+            noise=noise_amp.*Ay; %total noise;
+        else
+            noise=noise_amp.*Ay.*cos(2*pi*time/noise_T-pi/2); %total noise;
+        end
 
         %% BEGIN DEBUG
 % 
