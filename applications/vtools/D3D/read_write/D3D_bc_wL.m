@@ -54,35 +54,38 @@ end
 %other
 nt=length(time);
 
-%% FILE
+%% OPEN
 
-%no edit
-kl=1;
-data{kl, 1}='[forcing]'; kl=kl+1;
-data{kl, 1}=sprintf('Name                            = %s_0001',fname_pli_d); kl=kl+1;
-data{kl, 1}='Function                        = timeseries'; kl=kl+1;
-data{kl, 1}='Time-interpolation              = linear'; kl=kl+1;
-data{kl, 1}='Quantity                        = time'; kl=kl+1;
-data{kl, 1}='Unit                            = seconds since 2000-01-01 00:00:00'; kl=kl+1;
-data{kl, 1}='Quantity                        = waterlevelbnd'; kl=kl+1;
-data{kl, 1}='Unit                            = m'; kl=kl+1;
-for kt=1:nt
-data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,etaw(kt)); kl=kl+1;
-end
-data{kl, 1}=''; kl=kl+1;
-data{kl, 1}='[forcing]'; kl=kl+1;
-data{kl, 1}=sprintf('Name                            = %s_0002',fname_pli_d); kl=kl+1;
-data{kl, 1}='Function                        = timeseries'; kl=kl+1;
-data{kl, 1}='Time-interpolation              = linear'; kl=kl+1;
-data{kl, 1}='Quantity                        = time'; kl=kl+1;
-data{kl, 1}='Unit                            = seconds since 2000-01-01 00:00:00'; kl=kl+1;
-data{kl, 1}='Quantity                        = waterlevelbnd'; kl=kl+1;
-data{kl, 1}='Unit                            = m'; kl=kl+1;
-for kt=1:nt
-data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,etaw(kt)); kl=kl+1;
-end
+[fid,fname_local]=write_local_and_copy('open',file_name,'overwrite',~check_existing);
 
 %% WRITE
 
-writetxt(file_name,data,'check_existing',check_existing)
+fprintf(fid,'[forcing]\r\n');
+fprintf(fid,'Name                            = %s_0001\r\n',fname_pli_d);
+fprintf(fid,'Function                        = timeseries\r\n');
+fprintf(fid,'Time-interpolation              = linear\r\n');
+fprintf(fid,'Quantity                        = time\r\n');
+fprintf(fid,'Unit                            = seconds since 2000-01-01 00:00:00\r\n');
+fprintf(fid,'Quantity                        = waterlevelbnd\r\n');
+fprintf(fid,'Unit                            = m\r\n');
+for kt=1:nt
+    fprintf(fid,'%0.7E \t%0.7E \r\n',time(kt)*Tfact,etaw(kt));
+end
+fprintf(fid,'\r\n');
+fprintf(fid,'[forcing]\r\n');
+fprintf(fid,'Name                            = %s_0002\r\n',fname_pli_d);
+fprintf(fid,'Function                        = timeseries\r\n');
+fprintf(fid,'Time-interpolation              = linear\r\n');
+fprintf(fid,'Quantity                        = time\r\n');
+fprintf(fid,'Unit                            = seconds since 2000-01-01 00:00:00\r\n');
+fprintf(fid,'Quantity                        = waterlevelbnd\r\n');
+fprintf(fid,'Unit                            = m\r\n');
+for kt=1:nt
+    fprintf(fid,'%0.7E \t%0.7E \r\n',time(kt)*Tfact,etaw(kt));
+end
 
+%% CLOSE
+
+write_local_and_copy('close',fid,fname_local,file_name)
+
+end %function

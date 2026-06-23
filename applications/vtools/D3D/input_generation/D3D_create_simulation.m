@@ -116,7 +116,7 @@ if ~only_run_script
             end
             D3D_dep(simdef_c)
         end
-        if exist(simdef.file.ini_vx,'file')~=2
+        if exist(simdef.file.IniFieldFile,'file')~=2
             D3D_fini_u(simdef)
         end
     end

@@ -72,21 +72,15 @@ if isfield(simdef.D3D,'dire_sim')==0
         simdef.D3D.dire_sim='';
     end
 end
-if isfield(simdef.D3D,'structure')==0
-    simdef.D3D.structure=0;
-end
-if isfield(simdef.D3D,'OMP_num')==0
-    simdef.D3D.OMP_num=NaN; %maximum
+
+simdef.D3D=isfield_default(simdef.D3D,'structure',NaN); 
+if isnan(simdef.D3D.structure)
+    error('specify D3D structure: 1=D3D4; 2=FM')
 end
 
-if simdef.D3D.structure==1
-    if ~isfield(simdef.file,'runid')
-        simdef.file.runid=fullfile(simdef.D3D.dire_sim,'runid');
-    end
-end
+simdef.D3D=isfield_default(simdef.D3D,'OMP_num',NaN); %maximum number of threads
 
-%default is serial computation in h7
-simdef=D3D_rework_nodes(simdef);
+simdef=D3D_rework_nodes(simdef); %default is serial computation in h7
 
 %%
 %% FILE
@@ -100,9 +94,12 @@ simdef=D3D_rework_nodes(simdef);
 %         end
 % end
 
-simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.01 1D2D\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat');
+if simdef.D3D.structure==1
+    simdef.file=isfield_default(simdef.file,'runid',fullfile(simdef.D3D.dire_sim,'runid'));
+end
+simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
 simdef.file=isfield_default(simdef.file,'exe_grd2map',simdef.file.exe_input);
-simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.01 1D2D\plugins\DeltaShell.Dimr\kernels\');
+simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\');
 simdef.file=isfield_default(simdef.file,'PillarFile','');
 
 %%
@@ -394,21 +391,18 @@ end
 
 switch simdef.D3D.structure
     case 1
-        if isfield(simdef.mdf,'K')==0
-            simdef.mdf.K=1; 
-        end
+        simdef.mdf=isfield_default(simdef.mdf,'K',1);
         if simdef.mdf.K==0
             simdef.mdf.K=1;
             warning('In D3D4 you cannot have 0 layers. 2D is achieved with K=1.')
         end
     case 2
-        if isfield(simdef.mdf,'K')==0
-            simdef.mdf.K=0; 
-        end
+        simdef.mdf=isfield_default(simdef.mdf,'K',0);
         if simdef.mdf.K==1
-            warning('You want a 3D computation with one layer')
+            simdef.mdf.K=0;
+            warning('You want a 3D computation with one layer. This is not sensible. In FM a 2D simulation is achieved with K=0. Changed to K=0.')
         end    
-        if isfield(simdef.grd,'Thick') && simdef.mdf.K>0 && simdef.D3D.structure==2
+        if isfield(simdef.grd,'Thick') && simdef.mdf.K>0
             warning('You want a 3D computation with varying layer thickness. This is not yet possible')
         end
 end
@@ -433,7 +427,7 @@ if isfield(simdef.mdf,'Dpuopt')==0
 end
 if ischar(simdef.mdf.Dpuopt)
     switch simdef.mdf.Dpuopt
-        case 'min_dps'
+        case {'min_dps','MOR'}
             simdef.mdf.Dpuopt=1;
         case 'mean_dps'
             if simdef.mor.morphology==0
@@ -577,7 +571,7 @@ switch simdef.bcm.noise_eta
         simdef.bcm=isfield_default(simdef.bcm,'noise_seed',1);
 end
 
-if isfield(simdef.bcm,'time') && ~isnan(simdef.bcm.time)
+if isfield(simdef.bcm,'time') && ~isnan(any(simdef.bcm.time))
     if simdef.bcm.time(end)<simdef.mdf.Tstop
         simdef.bcm.time=[simdef.bcm.time;simdef.mdf.Tstop];
         if isfield(simdef.bcm,'eta')
@@ -585,6 +579,9 @@ if isfield(simdef.bcm,'time') && ~isnan(simdef.bcm.time)
         end
         if isfield(simdef.bcm,'deta_dt')
             simdef.bcm.deta_dt=[simdef.bcm.deta_dt,simdef.bcm.deta_dt(end)];
+        end
+        if isfield(simdef.bcm,'transport')
+            simdef.bcm.transport=[simdef.bcm.transport;simdef.bcm.transport(end,:)];
         end
     end
 end
@@ -638,9 +635,12 @@ if simdef.D3D.structure==1
         simdef.ini.I0=0;
     end
 else
-    if isfield(simdef.file,'ext')==0
-        simdef.file.ext=fullfile(simdef.D3D.dire_sim,'ext.ext');
-    end
+    %outdated. Currently in <IniFieldFile>.
+    % if isfield(simdef.file,'ext')==0
+    %     simdef.file.ext=fullfile(simdef.D3D.dire_sim,'ext.ext');
+    % end
+    simdef.file=isfield_default(simdef.file,'ext','');
+    simdef.file=isfield_default(simdef.file,'IniFieldFile',fullfile(simdef.D3D.dire_sim,'ini.ini'));
     if isfield(simdef.file,'etaw')==0
         simdef.file.etaw=fullfile(simdef.D3D.dire_sim,'etaw.xyz');
     end

@@ -29,21 +29,26 @@ nf=size(frac,3);
 nl=size(frac,2);
 
 %%
-kl=1;
-data{kl,1}='[BedCompositionFileInformation]'; kl=kl+1;
-data{kl,1}='FileVersion     = 01.00'; kl=kl+1;
-data{kl,1}=sprintf('FileCreatedBy   = %s',username); kl=kl+1;
-data{kl,1}=sprintf('FileCreationDate= %s',string(datetime('now'))); kl=kl+1;
-for ksl=1:nl
-data{kl,1}='[Layer]'; kl=kl+1;
-data{kl,1}='Type = volume fraction'; kl=kl+1;
-data{kl,1}=sprintf('Thick = %s/lyr%02d_thk.xyz',folder_out,ksl); kl=kl+1;
-for kf=1:nf
-data{kl,1}=sprintf('Fraction%d = %s/lyr%02d_frac%02d.xyz',kf,folder_out,ksl,kf); kl=kl+1;
-end %kf
-end %kl
-           
+
+%% OPEN
+
+[fid,fname_local]=write_local_and_copy('open',simdef.file.mini,'overwrite',true);
+
 %% WRITE
 
-file_name=fullfile(dire_sim,'morini.ini');
-writetxt(file_name,data)
+fprintf(fid,'[BedCompositionFileInformation]\r\n');
+fprintf(fid,'FileVersion     = 01.00\r\n');
+fprintf(fid,'FileCreatedBy   = %s\r\n',getenv("USERNAME"));
+fprintf(fid,'FileCreationDate= %s\r\n',string(datetime('now')));
+for ksl=1:nl
+    fprintf(fid,'[Layer]\r\n');
+    fprintf(fid,'Type = volume fraction\r\n');
+    fprintf(fid,'Thick = %s/lyr%02d_thk.xyz\r\n',folder_out,ksl);
+    for kf=1:nf
+        fprintf(fid,'Fraction%d = %s/lyr%02d_frac%02d.xyz\r\n',kf,folder_out,ksl,kf);
+    end %kf
+end %kl
+
+%% CLOSE
+
+write_local_and_copy('close',fid,fname_local,simdef.file.mini)

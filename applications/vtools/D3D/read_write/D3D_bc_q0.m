@@ -56,39 +56,41 @@ upstream_nodes=simdef.mor.upstream_nodes;
 %other
 nt=length(time);
 
-%% FILE
+%% OPEN
 
-%no edit
-kl=1;
-for kun=1:upstream_nodes
-    data{kl, 1}=        '[forcing]'; kl=kl+1;
-    data{kl, 1}=sprintf('Name                            = %s_%02d_0001',fname_pli_u,kun); kl=kl+1;
-    data{kl, 1}=        'Function                        = timeseries'; kl=kl+1;
-    data{kl, 1}=        'Time-interpolation              = linear'; kl=kl+1;
-    data{kl, 1}=        'Quantity                        = time'; kl=kl+1;
-    data{kl, 1}=        'Unit                            = seconds since 2000-01-01 00:00:00'; kl=kl+1;
-    data{kl, 1}=        'Quantity                        = dischargebnd'; kl=kl+1;
-    data{kl, 1}=        'Unit                            = m³/s'; kl=kl+1;
-    for kt=1:nt
-        data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,Q(kt)/upstream_nodes); kl=kl+1;
-    end
-    data{kl, 1}=''; kl=kl+1;
-    data{kl, 1}=        '[forcing]'; kl=kl+1;
-    data{kl, 1}=sprintf('Name                            = %s_%02d_0002',fname_pli_u,kun); kl=kl+1;
-    data{kl, 1}=        'Function                        = timeseries'; kl=kl+1;
-    data{kl, 1}=        'Time-interpolation              = linear'; kl=kl+1;
-    data{kl, 1}=        'Quantity                        = time'; kl=kl+1;
-    data{kl, 1}=        'Unit                            = seconds since 2000-01-01 00:00:00'; kl=kl+1;
-    data{kl, 1}=        'Quantity                        = dischargebnd'; kl=kl+1;
-    data{kl, 1}=        'Unit                            = m³/s'; kl=kl+1;
-    for kt=1:nt
-        data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,Q(kt)/upstream_nodes); kl=kl+1;
-    end
-    data{kl, 1}=''; kl=kl+1;
-end %knu
+[fid,fname_local]=write_local_and_copy('open',file_name,'overwrite',~check_existing);
 
 %% WRITE
 
-% file_name=fullfile(dire_sim,'bc_q0.bc');
-writetxt(file_name,data,'check_existing',check_existing);
+for kun=1:upstream_nodes
+    fprintf(fid,'[forcing]\r\n');
+    fprintf(fid,'Name                            = %s_%02d_0001\r\n',fname_pli_u,kun);
+    fprintf(fid,'Function                        = timeseries\r\n');
+    fprintf(fid,'Time-interpolation              = linear\r\n');
+    fprintf(fid,'Quantity                        = time\r\n');
+    fprintf(fid,'Unit                            = seconds since 2000-01-01 00:00:00\r\n');
+    fprintf(fid,'Quantity                        = dischargebnd\r\n');
+    fprintf(fid,'Unit                            = m3/s\r\n');
+    for kt=1:nt
+        fprintf(fid,'%0.7E \t%0.7E \r\n',time(kt)*Tfact,Q(kt)/upstream_nodes);
+    end
+    fprintf(fid,'\r\n');
+    fprintf(fid,'[forcing]\r\n');
+    fprintf(fid,'Name                            = %s_%02d_0002\r\n',fname_pli_u,kun);
+    fprintf(fid,'Function                        = timeseries\r\n');
+    fprintf(fid,'Time-interpolation              = linear\r\n');
+    fprintf(fid,'Quantity                        = time\r\n');
+    fprintf(fid,'Unit                            = seconds since 2000-01-01 00:00:00\r\n');
+    fprintf(fid,'Quantity                        = dischargebnd\r\n');
+    fprintf(fid,'Unit                            = m3/s\r\n');
+    for kt=1:nt
+        fprintf(fid,'%0.7E \t%0.7E \r\n',time(kt)*Tfact,Q(kt)/upstream_nodes);
+    end
+    fprintf(fid,'\r\n');
+end %knu
 
+%% CLOSE
+
+write_local_and_copy('close',fid,fname_local,file_name)
+
+end %function

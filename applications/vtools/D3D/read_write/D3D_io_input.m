@@ -292,6 +292,8 @@ switch what_do
                                 simdef.csl=stru_in;
                                 D3D_crosssectionlocation(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
                         end
+                    elseif isfield(stru_in,'quantity') %iniField format (Initial/Parameter blocks)
+                        D3D_write_inifield(fname,stru_in);
                     else
                         %If not a special case, the first level of the
                         %structure is the chapter. An integer at the end of

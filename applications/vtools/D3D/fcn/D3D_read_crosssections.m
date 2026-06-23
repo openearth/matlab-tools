@@ -51,6 +51,29 @@ function [cs_out, global_data]=parse_file_content(file_content, specs)
     cs_out=struct();
     global_data=struct();
 
+    % Detect and parse [Initial] / [Parameter] blocks (iniField format)
+    initial_indices=find(cellfun(@(x) strcmpi(strtrim(x),'[Initial]'), file_content));
+    param_indices=find(cellfun(@(x) strcmpi(strtrim(x),'[Parameter]'), file_content));
+
+    if ~isempty(initial_indices) || ~isempty(param_indices)
+        cs_ini=struct([]);
+        cs_par=struct([]);
+        if ~isempty(initial_indices)
+            cs_ini=parse_blocks(file_content, initial_indices, specs, nlcsin);
+            for k=1:numel(cs_ini)
+                cs_ini(k).blockType='initial';
+            end
+        end
+        if ~isempty(param_indices)
+            cs_par=parse_blocks(file_content, param_indices, specs, nlcsin);
+            for k=1:numel(cs_par)
+                cs_par(k).blockType='parameter';
+            end
+        end
+        cs_out=merge_struct_arrays(cs_ini, cs_par);
+        return;
+    end
+
     % Parse [Definition] blocks if present
     def_indices=find(cellfun(@(x) contains(x,'[Definition]'), file_content));
     if ~isempty(def_indices)
@@ -351,8 +374,108 @@ function D3D_test_find_file_type()
         end
     end
 
-    fprintf('=== SUMMARY ===\n');
+    fprintf('=== SUMMARY (cross-section tests) ===\n');
     fprintf('Passed: %d / Failed: %d\n', npass, nfail);
+
+    %% iniField assertion tests
+    fprintf('\n=== iniField TESTS ===\n\n');
+    nipass=0;
+    nifail=0;
+
+    % --- iniField test 1: basic [Initial] block ---
+    try
+        fprintf('iniField test 1: basic [Initial] block\n');
+        fc={ ...
+            '[Initial]'; 'quantity = bedlevel'; 'dataFile = dep.xyz'; ...
+            'dataFileType = sample'; 'interpolationMethod = averaging'; 'averagingType = nearestNb'};
+        [cs, ~]=parse_file_content(fc, specs);
+        assert(numel(cs)==1,                              'expected 1 entry');
+        assert(strcmp(cs(1).blockType,'initial'),         'blockType must be ''initial''');
+        assert(strcmp(cs(1).quantity,'bedlevel'),         'quantity mismatch');
+        assert(strcmp(cs(1).dataFile,'dep.xyz'),          'dataFile mismatch');
+        assert(strcmp(cs(1).dataFileType,'sample'),       'dataFileType mismatch');
+        assert(strcmp(cs(1).interpolationMethod,'averaging'), 'interpolationMethod mismatch');
+        assert(strcmp(cs(1).averagingType,'nearestNb'),   'averagingType mismatch');
+        nipass=nipass+1;
+        fprintf('  PASS\n\n');
+    catch ME
+        fprintf('  FAIL: %s\n\n', ME.message);
+        nifail=nifail+1;
+    end
+
+    % --- iniField test 2: basic [Parameter] block ---
+    try
+        fprintf('iniField test 2: basic [Parameter] block\n');
+        fc={ ...
+            '[Parameter]'; 'quantity = frictionCoefficient'; 'dataFile = manning.xyz'; ...
+            'dataFileType = sample'; 'interpolationMethod = triangulation'};
+        [cs, ~]=parse_file_content(fc, specs);
+        assert(numel(cs)==1,                                    'expected 1 entry');
+        assert(strcmp(cs(1).blockType,'parameter'),             'blockType must be ''parameter''');
+        assert(strcmp(cs(1).quantity,'frictionCoefficient'),    'quantity mismatch');
+        assert(strcmp(cs(1).dataFile,'manning.xyz'),            'dataFile mismatch');
+        assert(strcmp(cs(1).interpolationMethod,'triangulation'), 'interpolationMethod mismatch');
+        nipass=nipass+1;
+        fprintf('  PASS\n\n');
+    catch ME
+        fprintf('  FAIL: %s\n\n', ME.message);
+        nifail=nifail+1;
+    end
+
+    % --- iniField test 3: mixed [Initial] and [Parameter] blocks (ini.ini content) ---
+    try
+        fprintf('iniField test 3: mixed [Initial] and [Parameter] blocks\n');
+        fc={ ...
+            '[General]'; 'fileVersion = 2.00'; 'fileType = iniField'; ...
+            '[Initial]'; 'quantity = bedlevel';        'dataFile = dep.xyz'; 'dataFileType = sample'; 'interpolationMethod = averaging'; 'averagingType = nearestNb'; ...
+            '[Initial]'; 'quantity = initialWaterLevel'; 'dataFile = dep.xyz'; 'dataFileType = sample'; 'interpolationMethod = averaging'; 'averagingType = nearestNb'; ...
+            '[Initial]'; 'quantity = initialVelocityX'; 'dataFile = dep.xyz'; 'dataFileType = sample'; 'interpolationMethod = averaging'; 'averagingType = nearestNb'; ...
+            '[Initial]'; 'quantity = initialVelocityY'; 'dataFile = dep.xyz'; 'dataFileType = sample'; 'interpolationMethod = averaging'; 'averagingType = nearestNb'; ...
+            '[Parameter]'; 'quantity = frictionCoefficient'; 'dataFile = manning.xyz'; 'dataFileType = sample'; 'interpolationMethod = triangulation'};
+        [cs, ~]=parse_file_content(fc, specs);
+        assert(numel(cs)==5,                                'expected 5 entries');
+        n_initial=sum(strcmp({cs.blockType},'initial'));
+        n_param  =sum(strcmp({cs.blockType},'parameter'));
+        assert(n_initial==4,                                'expected 4 initial entries');
+        assert(n_param==1,                                  'expected 1 parameter entry');
+        assert(strcmp(cs(1).quantity,'bedlevel'),            'first entry quantity mismatch');
+        assert(strcmp(cs(5).blockType,'parameter'),         'last entry must be parameter');
+        assert(strcmp(cs(5).quantity,'frictionCoefficient'),'last entry quantity mismatch');
+        nipass=nipass+1;
+        fprintf('  PASS\n\n');
+    catch ME
+        fprintf('  FAIL: %s\n\n', ME.message);
+        nifail=nifail+1;
+    end
+
+    % --- iniField test 4: optional fields ---
+    try
+        fprintf('iniField test 4: optional fields (operand, averagingRelSize, averagingNumMin, averagingPercentile, extrapolationMethod, locationType)\n');
+        fc={ ...
+            '[Initial]'; 'quantity = bedlevel'; 'dataFile = dep.xyz'; ...
+            'dataFileType = polygon'; 'interpolationMethod = averaging'; ...
+            'operand = O'; 'averagingType = mean'; 'averagingRelSize = 1.01'; ...
+            'averagingNumMin = 2'; 'averagingPercentile = 0.5'; ...
+            'extrapolationMethod = yes'; 'locationType = 2d'; 'value = -5.0'};
+        [cs, ~]=parse_file_content(fc, specs);
+        assert(numel(cs)==1,                                  'expected 1 entry');
+        assert(strcmp(cs(1).operand,'O'),                     'operand mismatch');
+        assert(strcmp(cs(1).averagingType,'mean'),            'averagingType mismatch');
+        assert(abs(cs(1).averagingRelSize - 1.01) < 1e-10,   'averagingRelSize mismatch');
+        assert(cs(1).averagingNumMin == 2,                    'averagingNumMin mismatch');
+        assert(abs(cs(1).averagingPercentile - 0.5) < 1e-10, 'averagingPercentile mismatch');
+        assert(strcmp(cs(1).extrapolationMethod,'yes'),       'extrapolationMethod mismatch');
+        assert(strcmp(cs(1).locationType,'2d'),               'locationType mismatch');
+        assert(abs(cs(1).value - (-5.0)) < 1e-10,            'value mismatch');
+        nipass=nipass+1;
+        fprintf('  PASS\n\n');
+    catch ME
+        fprintf('  FAIL: %s\n\n', ME.message);
+        nifail=nifail+1;
+    end
+
+    fprintf('=== SUMMARY (iniField tests) ===\n');
+    fprintf('Passed: %d / Failed: %d\n', nipass, nifail);
 
 end %D3D_test_find_file_type
 
@@ -422,8 +545,53 @@ function specs=get_unified_specs()
         'singleValuedZ'   ,str_char_one                 ,@parse_first ; ...
         % Global fields
         'leveeTransitionHeight',str_dec          ,@parse_double ; ...
+        % iniField blocks ([Initial] / [Parameter])
+        'quantity'             ,str_char_one       ,@parse_first  ; ...
+        'dataFile'             ,str_char_one       ,@parse_first  ; ...
+        'dataFileType'         ,str_char_one       ,@parse_first  ; ...
+        'interpolationMethod'  ,str_char_one       ,@parse_first  ; ...
+        'operand'              ,'\S+'              ,@parse_first  ; ...
+        'averagingType'        ,str_char_one       ,@parse_first  ; ...
+        'averagingRelSize'     ,str_dec            ,@parse_double ; ...
+        'averagingNumMin'      ,'\d+'              ,@parse_integer; ...
+        'averagingPercentile'  ,str_dec            ,@parse_double ; ...
+        'extrapolationMethod'  ,str_char_one       ,@parse_first  ; ...
+        'locationType'         ,str_char_one       ,@parse_first  ; ...
+        'value'                ,str_dec            ,@parse_double ; ...
+        'frictionType'         ,str_char_one       ,@parse_first  ; ...
+        'tracerFallVelocity'   ,str_dec            ,@parse_double ; ...
+        'tracerDecayTime'      ,str_dec            ,@parse_double ; ...
     };
 end
+
+%%
+function merged=merge_struct_arrays(arr1, arr2)
+% Merge two struct arrays that may have different field sets.
+% Missing fields in each array are filled with [].
+    if isempty(arr1)
+        merged=arr2;
+        return;
+    end
+    if isempty(arr2)
+        merged=arr1;
+        return;
+    end
+    f1=fieldnames(arr1);
+    f2=fieldnames(arr2);
+    missing_in_1=setdiff(f2, f1);
+    missing_in_2=setdiff(f1, f2);
+    for k=1:numel(arr1)
+        for kf=1:numel(missing_in_1)
+            arr1(k).(missing_in_1{kf})=[];
+        end
+    end
+    for k=1:numel(arr2)
+        for kf=1:numel(missing_in_2)
+            arr2(k).(missing_in_2{kf})=[];
+        end
+    end
+    merged=[arr1, arr2];
+end %merge_struct_arrays
 
 %%
 function out=to_char(v)

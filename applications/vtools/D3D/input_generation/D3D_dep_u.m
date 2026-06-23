@@ -113,6 +113,17 @@ switch simdef.ini.etab_noise
 %         noise_amp=simdef.ini.noise_amp;
 % %         noise(1:end-3,2:end-1)=noise_amp.*(rand(ny-3,nx-2)-0.5);
 %         noise(1:end-3,1:end)=noise_amp.*(rand(ny-3,nx)-0.5);
+    case {4,'trench'}
+        noise_amp=-simdef.ini.noise_amp; %positive means trench, negative means hump
+        noise_trench_x=simdef.ini.noise_trench_x;
+        
+        noise=zeros(size(depths));
+
+        x=Xtot;
+        % y=Ytot;
+
+        bol_x=x>=noise_trench_x(1) & x<=noise_trench_x(2);        
+        noise(bol_x)=noise_amp;
     case 5        
         mu=simdef.ini.noise_x0;
         etab_max=simdef.ini.noise_amp;
