@@ -102,6 +102,12 @@ simdef.file=isfield_default(simdef.file,'exe_grd2map',simdef.file.exe_input);
 simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\');
 simdef.file=isfield_default(simdef.file,'PillarFile','');
 
+simdef.file=isfield_default(simdef.file,'StructureFile','');
+simdef.file=isfield_default(simdef.file,'CrossDefFile','');
+simdef.file=isfield_default(simdef.file,'CrossLocFile','');
+simdef.file=isfield_default(simdef.file,'FrictFile','');
+simdef.file=isfield_default(simdef.file,'IniFieldFile',fullfile(simdef.D3D.dire_sim,'ini.ini')); %we always have it
+
 %%
 %% GRID
 %%
@@ -455,19 +461,19 @@ end
 %     error('adjust flow depth file accordingly')
 % end
 
-if isfield(simdef.mdf,'ext')==0
-    simdef.mdf.ext='ext.ext';
-end
+% if isfield(simdef.mdf,'ext')==0
+%     simdef.mdf.ext='ext.ext';
+% end
 
-if isfield(simdef.mdf,'extn')==0
-    simdef.mdf.extn='bnd.ext';
-end
+% if isfield(simdef.mdf,'extn')==0
+%     simdef.mdf.extn='bnd.ext';
+% end
 
-if simdef.D3D.structure==1
-if isfield(simdef.mdf,'tra')==0
-    simdef.mdf.tra='tra.tra';
-end
-end
+% if simdef.D3D.structure==1
+% if isfield(simdef.mdf,'tra')==0
+%     simdef.mdf.tra='tra.tra';
+% end
+% end
 
 if isfield(simdef.mdf,'izbndpos')==0
     if simdef.D3D.structure==1
@@ -497,11 +503,12 @@ if isfield(simdef.mdf,'Idensform')==0
     simdef.mdf.Idensform=0;
 end
 
-simdef.mdf=isfield_default(simdef.mdf,'StructureFile','');
-simdef.mdf=isfield_default(simdef.mdf,'CrossDefFile','');
-simdef.mdf=isfield_default(simdef.mdf,'CrossLocFile','');
-simdef.mdf=isfield_default(simdef.mdf,'FrictFile','');
-simdef.mdf=isfield_default(simdef.mdf,'IniFieldFile','');
+%these should not be here. Handled in D3D_mdu. No need to have this flag. 
+% simdef.mdf=isfield_default(simdef.mdf,'StructureFile','');
+% simdef.mdf=isfield_default(simdef.mdf,'CrossDefFile','');
+% simdef.mdf=isfield_default(simdef.mdf,'CrossLocFile','');
+% simdef.mdf=isfield_default(simdef.mdf,'FrictFile','');
+% simdef.mdf=isfield_default(simdef.mdf,'IniFieldFile','');
 
 simdef.mdf=isfield_default(simdef.mdf,'Vicouv',1);
 simdef.mdf=isfield_default(simdef.mdf,'Dicouv',1);
@@ -640,6 +647,7 @@ else
     %     simdef.file.ext=fullfile(simdef.D3D.dire_sim,'ext.ext');
     % end
     simdef.file=isfield_default(simdef.file,'ext','');
+    simdef.mdf.ext='ext.ext';
     simdef.file=isfield_default(simdef.file,'IniFieldFile',fullfile(simdef.D3D.dire_sim,'ini.ini'));
     if isfield(simdef.file,'etaw')==0
         simdef.file.etaw=fullfile(simdef.D3D.dire_sim,'etaw.xyz');
@@ -946,13 +954,7 @@ else
 end
 simdef.mdf.thd=fname_thd;
 
-if isfield(simdef.file,'PillarFile');
-    fname_pf=simdef.file.PillarFile;
-else
-    fname_pf='';
-end
-simdef.mdf.PillarFile=fname_pf;
-
+simdef.file=isfield_default(simdef.file,'PillarFile','');
 
 %% RENAME OUT
 
@@ -1054,7 +1056,7 @@ simdef=parse_file_name(simdef,'mor','mor.mor');
 
 if simdef.mor.morphology
     simdef.mdf.BedlevType=1; 
-    simdef.mdf.sedimentmodelnr=1;
+    simdef.mdf.sedimentmodelnr=4;
 else
     simdef.mdf.sedimentmodelnr=0;
 end

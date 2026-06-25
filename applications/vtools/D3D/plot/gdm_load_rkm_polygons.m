@@ -18,6 +18,10 @@
 %centerline between subsequent river-kilometer points.
 %
 %It considers the distances corrected by bend cutoff. 
+%
+%PROBLEM:
+%We pass as input `rkm_cen_br` and constuct `rkm_edg_br` based on the `track`. It is inconsistent and
+%problematic if the user provides `rkm_cen_br`. The safest would be to always pass `track`. 
 
 function data=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,fpath_map,fpath_rkm,rkm_cen,rkm_cen_br,rkm_name,varargin)
 
@@ -41,6 +45,7 @@ if numel(varargin)>0 && ~isempty(varargin{1,1})
         rkm_cen_br(kpol)=branch_str_num(rkm_cen(kpol),track);
     end
 else
+    warning('This option will be deprecated. You should provide the track as input. I am using the first branch of the rkm_cen_br as track.')
     track=rkm_cen_br{1}; %Not safe. If branches are given and no track, if the first is 'PK' it will be unable to find 'IJ'. 
 end
 

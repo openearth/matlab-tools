@@ -50,8 +50,6 @@ Smagorinsky=simdef.mdf.Smagorinsky;
 wall_rough=simdef.mdf.wall_rough;
 wall_ks=simdef.mdf.wall_ks;
 
-obs_filename=simdef.mdf.obs_filename;
-
 Flhis_dt=simdef.mdf.Flhis_dt;
 Flrst_dt=simdef.mdf.Flrst_dt;
 
@@ -103,17 +101,23 @@ fprintf(fid,'GridEnclosureFile =         \r\n');
 % else
 % data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
 % end
-fprintf(fid,'IniFieldFile      = %s\r\n',simdef.mdf.IniFieldFile);
+[~,fname,fext]=fileparts(simdef.file.IniFieldFile);
+fprintf(fid,'IniFieldFile      = %s\r\n',sprintf('%s%s',fname,fext));
 fprintf(fid,'LandBoundaryFile  =         \r\n');
 fprintf(fid,'UseCaching        = 0       \r\n');
 fprintf(fid,'ThinDamFile       =         \r\n');
 fprintf(fid,'FixedWeirFile     =         \r\n');
-fprintf(fid,'PillarFile        = %s\r\n',simdef.mdf.PillarFile);
-fprintf(fid,'StructureFile     = %s\r\n',simdef.mdf.StructureFile);
+[~,fname,fext]=fileparts(simdef.file.PillarFile);
+fprintf(fid,'PillarFile        = %s\r\n',sprintf('%s%s',fname,fext));
+[~,fname,fext]=fileparts(simdef.file.StructureFile);
+fprintf(fid,'StructureFile     = %s\r\n',sprintf('%s%s',fname,fext));
 % data{kl,1}=        'VertplizFile      =         '; kl=kl+1;
-fprintf(fid,'CrossDefFile      = %s\r\n',simdef.mdf.CrossDefFile);
-fprintf(fid,'CrossLocFile      = %s\r\n',simdef.mdf.CrossLocFile);
-fprintf(fid,'FrictFile         = %s\r\n',simdef.mdf.FrictFile);
+[~,fname,fext]=fileparts(simdef.file.CrossDefFile);
+fprintf(fid,'CrossDefFile      = %s\r\n',sprintf('%s%s',fname,fext));
+[~,fname,fext]=fileparts(simdef.file.CrossLocFile);
+fprintf(fid,'CrossLocFile      = %s\r\n',sprintf('%s%s',fname,fext));
+[~,fname,fext]=fileparts(simdef.file.FrictFile);
+fprintf(fid,'FrictFile         = %s\r\n',sprintf('%s%s',fname,fext));
 % data{kl,1}=        'ProflocFile       =         '; kl=kl+1;
 % data{kl,1}=        'ProfdefFile       =         '; kl=kl+1;
 % data{kl,1}=        'ProfdefxyzFile    =         '; kl=kl+1;
@@ -281,8 +285,10 @@ fprintf(fid,'RestartDateTime   =                              \r\n');
 fprintf(fid,'                                                 \r\n');
 %%
 fprintf(fid,'[external forcing]                               \r\n');
-fprintf(fid,'ExtForceFile      = %s\r\n',simdef.mdf.ext)           ;
-fprintf(fid,'ExtForceFileNew   = %s\r\n',simdef.mdf.extn)          ;
+[~,fname,fext]=fileparts(simdef.file.ext);
+fprintf(fid,'ExtForceFile      = %s\r\n',sprintf('%s%s',fname,fext))           ;
+[~,fname,fext]=fileparts(simdef.file.extn);
+fprintf(fid,'ExtForceFileNew   = %s\r\n',sprintf('%s%s',fname,fext))          ;
 fprintf(fid,'                                                 \r\n');
 %%
 fprintf(fid,'[trachytopes]                                    \r\n');
@@ -309,7 +315,8 @@ fprintf(fid,'OutputDir         =                              \r\n');
 fprintf(fid,'WAQOutputDir      =                              \r\n');
 fprintf(fid,'FlowGeomFile      =                              \r\n');
 if Flhis_dt>0
-fprintf(fid,'ObsFile           = %s\r\n',obs_filename);
+[~,fname,fext]=fileparts(simdef.file.obs);
+fprintf(fid,'ObsFile           = %s\r\n',sprintf('%s%s',fname,fext));
 end
 fprintf(fid,'CrsFile           =                              \r\n');
 fprintf(fid,'HisFile           =                              \r\n');
@@ -364,8 +371,10 @@ fprintf(fid,'                                                 \r\n');
 %% morphology
 
 fprintf(fid,'[sediment]                                       \r\n');
-fprintf(fid,'MorFile           = %s                      \r\n',simdef.mdf.mor);
-fprintf(fid,'SedFile           = %s                      \r\n',simdef.mdf.sed);
+[~,fname,fext]=fileparts(simdef.file.mor);
+fprintf(fid,'MorFile           = %s                      \r\n',sprintf('%s%s',fname,fext));
+[~,fname,fext]=fileparts(simdef.file.sed);
+fprintf(fid,'SedFile           = %s                      \r\n',sprintf('%s%s',fname,fext));
 fprintf(fid,'Sedimentmodelnr   = %d                            \r\n',simdef.mdf.sedimentmodelnr);
 fprintf(fid,'MorCFL            = 0                            \r\n'); %Use morphological time step restriction (1, default) or not (0)
 
