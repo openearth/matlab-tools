@@ -43,4 +43,9 @@ for kf=1:numel(fn)
     end
 end
 
+%adhoc... also data.Ycor
+if isfield(data,'gridInfo') && isfield(data.gridInfo,'Ycor')
+    data.gridInfo.Ycor=data.gridInfo.Ycor(kt,:,:);
+end
+
 end %function

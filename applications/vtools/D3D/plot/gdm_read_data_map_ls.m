@@ -56,7 +56,7 @@ else
     else %char
         [data,data.gridInfo]=EHY_getMapModelData(fpath_map,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
     end
-    fn={'val','val_staircase','vel_x','vel_y','vel_mag','vel_dir','Zcen','vel_para','vel_perp','vel_x_da','vel_y_da','vel_mag_da','vel_para_da','vel_perp_da'};
+    fn={'times','val','val_staircase','vel_x','vel_y','vel_mag','vel_dir','Zcen','Zint','vel_para','vel_perp','vel_x_da','vel_y_da','vel_mag_da','vel_para_da','vel_perp_da'};
     data=gdm_get_only_one_time(data,time_dnum,tol_t,fn);
     save_check(fpath_sal,'data');
 end
