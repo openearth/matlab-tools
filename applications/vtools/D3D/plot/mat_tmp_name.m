@@ -86,7 +86,10 @@ if ~isempty(layer)
     str_w2=strcat('%s_layer_',str_w);
     str_add=sprintf(str_w2,str_add,layer);
     str_add=strrep(str_add,' ','');
-    
+    if numel(str_add)>10
+        str_add=hash_string(str_add);
+    end
+
 %     str_add=sprintf('%s_layer_%04d',str_add,layer);
 end
 

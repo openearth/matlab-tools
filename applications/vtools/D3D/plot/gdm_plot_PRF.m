@@ -436,7 +436,11 @@ if ~isempty(layer)
     if isinf(layer)
         str_b=sprintf('%s_Inf',str_b);
     else
-        str_b=sprintf('%s_%02d',str_b,layer);
+        str_layer=sprintf('%02d',layer);
+        if numel(str_layer)>10
+            str_layer=hash_string(str_layer);
+        end
+        str_b=sprintf('%s_%s',str_b,str_layer);
     end
 end
 

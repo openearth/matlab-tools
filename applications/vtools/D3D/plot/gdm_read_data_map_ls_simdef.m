@@ -154,7 +154,10 @@ switch varname
                 data.val=data.vel_mag;
             case {2,4}
                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'lyrfrac',varargin{:});
-                data.val=squeeze(data.val(:,:,layer,var_idx));
+                %We do not squeeze. Here time is first dimension still. 
+                %We do not take layer. We do it below. 
+                % data.val=squeeze(data.val(:,:,layer,var_idx)); 
+                data.val=data.val(:,:,:,var_idx);
         end
     case {'Fr','fr'}
         switch simdef.D3D.structure

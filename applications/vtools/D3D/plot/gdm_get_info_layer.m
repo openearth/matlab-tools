@@ -46,6 +46,9 @@ if ~isempty(layer)
         end
     else
         data.val=submatrix(data.val,idx_layer,layer);
+        if is2dv
+            data.gridInfo.Ycor=submatrix(data.gridInfo.Ycor,idx_layer,[layer,layer(end)+1]);
+        end
     end
 end
 

@@ -19,13 +19,13 @@ if isfield(flg_loc,'layer')==0
 else
     if iscell(flg_loc.layer)
         layer=flg_loc.layer{kvar};
-    else
-        if isnan(flg_loc.layer)
-            layer=no_layers;
-        else
-            layer=flg_loc.layer;
-        end
+    else 
+        layer=flg_loc.layer;
     end
+end
+
+if isnan(layer)
+    layer=no_layers;
 end
 
 %remove the input if makes no sense. Otherwise the filename has the 'layer'.
