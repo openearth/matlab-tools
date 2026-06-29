@@ -208,6 +208,10 @@
 % in_plot.(tag).do_all_t_xt=1; %all times together xt
 % in_plot.(tag).do_all_t_xt_diff_t=1; %all times together xt, difference in time
 % in_plot.(tag).var={'bl'}; %list variables: `open D3D_list_of_variables`
+%plot a longitudinal profile of fractions
+% % in_plot.(tag).var={'lyrfrac'}; %list variables: `open D3D_list_of_variables`
+% % in_plot.(tag).var_idx{1}=1;
+% % in_plot.(tag).layer{1}=1:1:52; %Inf takes all the flow layers, but not sediment layers. Specify manually. 
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).use_local_time=0; %use the time of each simulation rather than the time of the reference simulation for comparison
 % in_plot.(tag).tim_type=2;
@@ -215,19 +219,20 @@
 % in_plot.(tag).fig_size=[0,0,16,9].*2;
 % in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli'); %polyline to take data [char] (path to file with polyline), [double] (coordinates of points [np,2] (x,y)).
 % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
+% in_plot.(tag).clims=[NaN,NaN;-0.2e-3,1.2e-3]; %attention! in patch plots, the number of clims controls the number of ylims.
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).tim_movie=40; %movie duration [s]
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).ml=2.5;
 % % in_plot.(tag).filter_lim=[0.992,1.1];
-% in_plot.(tag).do_marker=1;
+% % in_plot.(tag).do_marker=1;
 % in_plot.(tag).do_replace_underscore=1; %replace underscore in legend
-% in_plot.(tag).markersize=5;
-% in_plot.(tag).do_staircase=1;
+% % in_plot.(tag).markersize=5;
+% % in_plot.(tag).do_staircase=1;
 % in_plot.(tag).plot_val0=0; %plot initial
 % % in_plot.(tag).xdir='reverse';
-% in_plot.(tag).leg_mea='Carnott'; %legend of measurements (default is 'measurements [-]')
+% % in_plot.(tag).leg_mea='Carnott'; %legend of measurements (default is 'measurements [-]')
 % % in_plot.(tag).xlab_str='whatever you want'
 % % in_plot.(tag).cmap=[0,0,0;1,1,1]; %custom colormap for each line in the plot
 % % in_plot.(tag).leg_str={'a','b'}; %custom legend

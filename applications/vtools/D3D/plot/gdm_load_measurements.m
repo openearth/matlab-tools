@@ -59,7 +59,7 @@ end
 messageOut(fid_log,sprintf('Loading measurements from file: %s',fpath_mea));
 load(fpath_mea,'data');
 
-if ~isstruct(data);
+if ~exist('data','var') || ~isstruct(data)
     messageOut(fid_log,sprintf('No data struct found in file: %s',fpath_mea));
     return;
 end
