@@ -36,6 +36,7 @@ mdu_struct.time.tstop = 1;
 mdu_struct.time.dtinit = 1;
 mdu_struct.time.dtuser = 1;
 mdu_struct.time.dtmax = 1;
+mdu_struct.output.mapinterval = 1;
 
 addOptional(parin,'fdir_work',fullfile(pwd,'tmp_grd2map'));
 addOptional(parin,'fpath_exe','c:\Program Files\Deltares\Delft3D FM Suite 2024.03 HM\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
