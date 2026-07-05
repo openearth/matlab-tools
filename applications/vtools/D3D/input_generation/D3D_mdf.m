@@ -66,7 +66,11 @@ grd=wlgrid('read',path_grd);
 M=size(grd.X,1)+1;
 N=size(grd.X,2)+1;
 
-K=simdef.grd.K;
+if isfield(simdef, 'grd')
+    K=simdef.grd.K;
+else
+    K = 0;
+end
 restart=simdef.mdf.restart;
 Tstart=simdef.mdf.Tstart;
 Tunit=simdef.mdf.Tunit;
