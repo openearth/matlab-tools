@@ -25,8 +25,8 @@ iS        = physpar.iS;      % Valley slope
 z0        = physpar.ks/30;
 L         = physpar.L;
 H0        = physpar.H0;
-Q0        = physpar.Q0;      %Unit discharge
-Fr        = Q0/H0/sqrt(g*H0);
+q0        = physpar.q0;      %Unit discharge
+Fr        = q0/H0/sqrt(g*H0);
 %Gthet     = physpar.Gthet;
 [numpar]  = getnumpar();
 CFL       = numpar.asRCFL;
@@ -88,7 +88,7 @@ while (dt > 0)
         case(2)
             l1  = 2*h;
             %L1   = 2*diag(h./ones(size(s))).*B2+B1;                       
-            [iR] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,iR0);          %iR = (inv(L1)*iR0);
+            [iR] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,iR0);          %iR = (inv(L1)*iR0);
         otherwise
     end
     
@@ -163,25 +163,25 @@ while (dt > 0)
         if length(FasRb)>2
            fnfndR0(1) = FasRb(3);
         end
-        [fnfndR] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fnfndR0);          %fnfndR = iL0*fnfndR0;
+        [fnfndR] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fnfndR0);          %fnfndR = iL0*fnfndR0;
         fnfnd0 = fnfnd;
-        [fnfnd] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fnfnd0);          %fnfndR = iL0*fnfndR0;
-        [psitot] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,psitot0);          %psitot = iL0*psitot0';
+        [fnfnd] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fnfnd0);          %fnfndR = iL0*fnfndR0;
+        [psitot] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,psitot0);          %psitot = iL0*psitot0';
         Cf3   = psitot.*Cf2;
-        [fnfnd] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fnfnd.*sign(iR));   %fnfnd  = iL0*(fnfnd.*sign(iR));
+        [fnfnd] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fnfnd.*sign(iR));   %fnfnd  = iL0*(fnfnd.*sign(iR));
         fsfndR = fsfnd.*iR;
         if length(FasRb)>1
            fsfndR(1) = FasRb(2);
         end
         %fsfndR(1) = -1;
-        [fsfndR] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fsfndR);           %fsfndR = iL0*fsfndR;
-        [atau] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,atau);               %atau   = iL0*atau;%.*sign(fsfnd);
+        [fsfndR] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,fsfndR);           %fsfndR = iL0*fsfndR;
+        [atau] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,atau);               %atau   = iL0*atau;%.*sign(fsfnd);
         %Ainf  = atau./physpar.Gthet;
         if (smoothrad == 0)
-           [iR] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,iR0);         %atau  = iL0*atau;%.*sign(fsfnd);
+           [iR] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,iR0);         %atau  = iL0*atau;%.*sign(fsfnd);
         end
         iRs   = iR;
-        [AR] = tdsol(l1.*B2a,l1.*B2b+B1b,l1.*B2c,AR0);         %atau  = iL0*atau;%.*sign(fsfnd);
+        [AR] = tdsol2(l1.*B2a,l1.*B2b+B1b,l1.*B2c,AR0);         %atau  = iL0*atau;%.*sign(fsfnd);
 
         dsAR = matprodsol(B2a,B2b,B2c,AR);
         dsiR = matprodsol(B2a,B2b,B2c,iR);
@@ -205,7 +205,7 @@ while (dt > 0)
         B1b2(end)= 0;
         
         asR0 = asR;
-        [asRnew] = tdsol(l1.*B2a,l1.*B2b+B1b2,l1.*B2c,FasR);          %fnfndR = iL0*fnfndR0;
+        [asRnew] = tdsol2(l1.*B2a,l1.*B2b+B1b2,l1.*B2c,FasR);          %fnfndR = iL0*fnfndR0;
         asR = rn*asR+(1-rn)*asRnew;
 
         if k>2;
@@ -236,15 +236,15 @@ while (dt > 0)
 end
 
 %% Downstream boundary condition
-t   = s<=L;
-q   = q(t);
-h   = h(t);
-asR = asR(t);
-s   = s(t);
-iR  = iR(t);
-Cf3 = Cf3(t);
-%y   = y(t);
-%x   = x(t);
+% t   = s<=L;
+% q   = q(t);
+% h   = h(t);
+% asR = asR(t);
+% s   = s(t);
+% iR  = iR(t);
+% Cf3 = Cf3(t);
+% %y   = y(t);
+% %x   = x(t);
 
 
 %% Output
