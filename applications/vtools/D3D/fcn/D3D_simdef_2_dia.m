@@ -15,7 +15,11 @@
 function [fpath_dia,structure]=D3D_simdef_2_dia(simdef)
 
 if isstruct(simdef)
-    fpath_dia=simdef.file.dia;
+    if isfield(simdef,'file') && isfield(simdef.file,'dia')
+        fpath_dia=simdef.file.dia;
+    else
+        fpath_dia='';
+    end
     structure=simdef.D3D.structure;
 elseif isfolder(simdef)
     dire_sim=simdef;

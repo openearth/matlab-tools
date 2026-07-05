@@ -74,4 +74,13 @@ else
     end
 end
 
+%enforce that the output has data.val
+if ~isfield(data,'val') 
+    if isfield(data,'vel_mag')
+        data.val=data.vel_mag;
+    else
+        data.val=NaN; %it should have the right dimensions. It may depend on D3D or FM. Solve when encountered. 
+    end
+end
+
 end %function

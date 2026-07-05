@@ -219,7 +219,7 @@ for kbr=1:nbr %branches
 
                 for ksim=1:nsim
                     tag_ref='diff_t';
-                    in_p.val=data_T(:,:,kt)-data_T(:,:,1);
+                    in_p.val=data_T(:,ksim,kt)-data_T(:,ksim,1);
                     in_p=reset_is(in_p);
                     in_p.is_diff_t=1;
                     in_p.val0=zeros(size(in_p.val));

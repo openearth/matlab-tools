@@ -34,7 +34,11 @@ switch simdef.D3D.structure
 end
 
 % Efficient search using shared utility function
-kl = D3D_search_dia(simdef.file.dia, search_str);
+if isfield(simdef.file, 'dia') && ~isempty(simdef.file.dia)
+    kl = D3D_search_dia(simdef.file.dia, search_str);
+else
+    kl = [];
+end
 
 status_found = true;
 if numel(kl) > 1
