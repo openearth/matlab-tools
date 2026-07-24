@@ -312,6 +312,8 @@ switch un_type
             otherwise
                 error('The factor %f is missing for unit %s',un,un_type)
         end
+    case 'pct'
+        str_un=' [%]';
     case '?'
         str_un=' [?]';
     otherwise

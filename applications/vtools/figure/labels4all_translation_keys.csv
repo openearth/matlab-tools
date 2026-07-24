@@ -77,6 +77,7 @@ total_sediment_transport_L2T,total sediment transport,totaal sedimenttransport,t
 total_sediment_transport_L3T,total sediment transport,totaal sedimenttransport,transporte de sedimento total,L3/T
 total_sediment_transport_L3,total sediment transport,totaal sedimenttransport,transporte de sedimento total,L3
 total_sediment_transport_M,total sediment transport,totaal sedimenttransport,transporte de sedimento total,M
+total_sediment_transport_pct,total sediment transport,totaal sedimenttransport,transporte de sedimento total,pct
 water_volume,water volume,watervolume,volumen de agua,L3
 chezy_friction_coefficient,Chézy friction coefficient,Chézy wrijvingscoëfficiënt,Coeficiente de fricción de Chézy,L1/2/T
 river_kilometre,river kilometre,rivierkilometer,kilómetro del río,L

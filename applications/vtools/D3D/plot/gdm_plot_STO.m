@@ -160,4 +160,35 @@ for kxlim=1:nxlim
     fig_1D_01(in_p);
 end 
 
+%plot relative
+
+in_p=flg_loc;
+
+in_p.leg_str=in_plot.(tag).var;
+val_cum_sum_kt_rel = cell2mat(val_cum_sum_kt);
+val_cum_sum_kt_rel = val_cum_sum_kt_rel./(val_cum_sum_kt_rel(:,1)*ones(1,size(val_cum_sum_kt_rel,2)))*100;
+in_p.val=val_cum_sum_kt_rel;
+
+in_p.tim=time_dnum_plot(kt);
+in_p.variable='stot_pct';
+in_p.s=rkmv.rkm_cen;
+in_p.xlab_str='rkm';
+in_p.xlab_un=1/1000;
+in_p.leg_loc='northoutside';
+in_p.fig_size=[0,0,14.5,15];
+% in_p.leg_loc='eastoutside';
+% in_p.fig_size=[0,0,27,15];
+in_p.y_scale='linear';
+
+nxlim=size(flg_loc.xlims,1);
+for kxlim=1:nxlim
+    fname_noext=fullfile(fdir_fig_loc,sprintf('%s_pct_%s_%s_%s_%s_kxlim_%d',tag,runid,datestr(time_dnum_plot(kt),'yyyymmdd_HHMMSS'),statis,sb_pol{ksb},kxlim));
+    in_p.fname=fname_noext;
+    in_p.xlims=flg_loc.xlims(kxlim,:);
+
+    fig_1D_01(in_p);
+end 
+
+
+
 end %function
