@@ -58,6 +58,10 @@ if exist(fpath_mat_time,'file')==2
     time_dtime=tim.time_dtime;
     time_mor_dtime=tim.time_mor_dtime;
     sim_idx=tim.sim_idx;
+    % status=tim.status; %Do not overwrite status. 
+                         % It passes from the input to be saved in the file. 
+                         % Whether the time variables is used or not depending on status is done by loading again the time variable. 
+                         % The status at this level is saved below. 
 
     nt=numel(time_dnum); %number of times in the postprocessing variable. It is output, so it needs to be before the `return`
     if flg_loc.tim_just_load %debug flag to go fast

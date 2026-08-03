@@ -125,6 +125,13 @@ if ~all(bol_f)
     return
 end
     
+%simulation running, so we have to compute all times again.
+if data.status==2 
+    messageOut(NaN,'Mat-file with all times available and simulation is running. Computing again.')
+    new_all_time_needed=true;
+    return
+end
+
 %simulation finished, so we can trust the existing file. 
 if data.status>2 
     messageOut(NaN,'Mat-file with all times available and simulation is finished. Using.')
