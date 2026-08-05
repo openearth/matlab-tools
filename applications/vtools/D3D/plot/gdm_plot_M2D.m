@@ -304,11 +304,6 @@ function [val_diff,val,val_ref,val_no_int]=gdm_match_times_diff_val_2D(flg_loc,s
 
 %% PARSE
 
-tol_tim=1; %tolerance to match objective day with available day
-if isfield(flg_loc,'tol_tim')
-    tol_tim=flg_loc.tol_tim;
-end
-
 fid_log=NaN;
 
 %% CALC
@@ -318,7 +313,7 @@ size_data=size(val_ref);
 %we do not need dtime, only dnum.
 [time_loc_v]=gdm_time_flow_mor(flg_loc,simdef,time_dnum,NaT,time_mor_dnum,NaT); %[nt_loc,1]
 
-[kt_loc,~,flg_found]=absmintol(time_loc_v,time_ref,'tol',tol_tim,'do_break',0,'do_disp_list',0,'dnum',1);
+[kt_loc,~,flg_found]=absmintol(time_loc_v,time_ref,'tol',flg_loc.tim_tol,'do_break',0,'do_disp_list',0,'dnum',1);
 if ~flg_found
     messageOut(fid_log,'No available reference data:');
     messageOut(fid_log,sprintf('     reference time   : %s',datestr(time_ref      ,'yyyy-mm-dd HH:MM:SS')));
