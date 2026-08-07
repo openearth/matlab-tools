@@ -14,11 +14,19 @@
 
 function NC_info(ncFile, varargin)
 
-if nargin > 1
-    outFile = varargin{1};
-else
-    outFile = 'ncinfo.txt';
-end
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'outFile','ncinfo.txt');
+addOptional(parin,'OutputFormat','table'); %verbose, table
+
+parse(parin,varargin{:});
+
+outFile = char(parin.Results.outFile);
+outputFormat = char(parin.Results.OutputFormat);
+
+%% CALC
 
 info = ncinfo(ncFile);
 
@@ -27,10 +35,13 @@ if fid == -1
     error('Could not open output file.');
 end
 
-fprintf(fid, 'NetCDF file metadata\n');
-fprintf(fid, '====================\n\n');
-
-writeStruct(info, fid, 0);
+if strcmpi(outputFormat, 'table')
+    writeVariableTable(info, fid);
+else
+    fprintf(fid, 'NetCDF file metadata\n');
+    fprintf(fid, '====================\n\n');
+    writeStruct(info, fid, 0);
+end
 
 fclose(fid);
 
@@ -70,6 +81,92 @@ for i = 1:numel(fields)
     else
         fprintf(fid, '%s%s: %s\n', pad, field, toString(value));
     end
+end
+
+end %function
+
+%%
+
+function writeVariableTable(info, fid)
+% Write a compact variable summary table
+
+if ~isfield(info, 'Variables') || isempty(info.Variables)
+    fprintf(fid, 'No variables found in NetCDF file.\n');
+    return;
+end
+
+vars = info.Variables;
+nVars = numel(vars);
+
+names = cell(nVars, 1);
+descriptions = cell(nVars, 1);
+dimensions = cell(nVars, 1);
+
+for i = 1:nVars
+    names{i} = vars(i).Name;
+    descriptions{i} = getVariableDescription(vars(i));
+    dimensions{i} = getDimensionString(vars(i));
+end
+
+nameLengths = cellfun(@numel, names);
+descLengths = cellfun(@numel, descriptions);
+
+nameWidth = max([numel('Variable'); nameLengths(:)]);
+descWidth = max([numel('Description'); descLengths(:)]);
+
+fprintf(fid, '%-*s  %-*s  %s\n', nameWidth, 'Variable', descWidth, 'Description', 'Dimensions');
+fprintf(fid, '%s  %s  %s\n', repmat('-', 1, nameWidth), repmat('-', 1, descWidth), repmat('-', 1, numel('Dimensions')));
+
+for i = 1:nVars
+    fprintf(fid, '%-*s  %-*s  %s\n', nameWidth, names{i}, descWidth, descriptions{i}, dimensions{i});
+end
+
+end %function
+
+%%
+
+function description = getVariableDescription(variable)
+% Resolve a human-readable variable description from common attribute names
+
+description = '';
+
+if isfield(variable, 'Attributes') && ~isempty(variable.Attributes)
+    attrNames = {variable.Attributes.Name};
+    idx = find(strcmpi(attrNames, 'long_name'), 1);
+    if isempty(idx)
+        idx = find(strcmpi(attrNames, 'description'), 1);
+    end
+    if isempty(idx)
+        idx = find(strcmpi(attrNames, 'standard_name'), 1);
+    end
+
+    if ~isempty(idx)
+        description = toString(variable.Attributes(idx).Value);
+    end
+end
+
+if isempty(description)
+    description = '-';
+end
+
+end %function
+
+%%
+
+function dims = getDimensionString(variable)
+% Convert variable dimensions to a compact string
+
+if isfield(variable, 'Dimensions') && ~isempty(variable.Dimensions)
+    nDims = numel(variable.Dimensions);
+    dimParts = cell(1, nDims);
+    for k = 1:nDims
+        dimParts{k} = sprintf('%s(%d)', variable.Dimensions(k).Name, variable.Dimensions(k).Length);
+    end
+    dims = strjoin(dimParts, ' x ');
+elseif isfield(variable, 'Size') && ~isempty(variable.Size)
+    dims = sprintf('[%s]', num2str(variable.Size));
+else
+    dims = '-';
 end
 
 end %function
