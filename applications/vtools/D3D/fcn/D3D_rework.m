@@ -179,6 +179,7 @@ end
 %% MORPHODYNAMICS
 %%
 
+%There is a dependency, `D3D_rework_sed` must be called before `D3D_rework_mor`.
 simdef=D3D_rework_sed(simdef);
 simdef=D3D_rework_mor(simdef);
 simdef=D3D_sedTrans_default(simdef);
@@ -194,8 +195,8 @@ for kf=1:nf
 end
 
 if ~simdef.mor.morphology %this really deactivates morphodynamics
-    simdef.mdf.mor='';
-    simdef.mdf.sed='';
+    simdef.file.mor='';
+    simdef.file.sed='';
 end
 
 %%
@@ -1052,7 +1053,7 @@ simdef.mor=isfield_default(simdef.mor,'morphology',0);
 %     return
 % end
 
-simdef=parse_file_name(simdef,'mor','mor.mor');
+simdef.file=isfield_default(simdef.file,'mor','mor.mor');
 
 if simdef.mor.morphology
     simdef.mdf.BedlevType=1; 
@@ -1130,27 +1131,11 @@ end %function
 
 %%
 
-function simdef=parse_file_name(simdef,field_name,default_name)
-
-if isfield(simdef.file,field_name)==0
-    if isfield(simdef.mdf,field_name)==0
-        simdef.mdf.(field_name)=default_name;
-    end
-    simdef.file.(field_name)=fullfile(simdef.D3D.dire_sim,simdef.mdf.(field_name));
-else
-    [~,fname,fext]=fileparts(simdef.file.(field_name));
-    simdef.mdf.(field_name)=sprintf('%s%s',fname,fext);
-end
-
-end
-
-%%
-
 function simdef=D3D_rework_sed(simdef)
 
 simdef.sed.dummy=NaN;
 
-simdef=parse_file_name(simdef,'sed','sed.sed');
+simdef.file=isfield_default(simdef.file,'sed','sed.sed');
 
 if isfield(simdef.sed,'dk')==0
     simdef.sed.dk=[];
