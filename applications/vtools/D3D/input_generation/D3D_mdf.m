@@ -108,31 +108,31 @@ end
     
 %% FILE
 
-kl=1;
-data{kl,1}=        'Ident  = #Delft3D-FLOW 3.56.29165#'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Filcco = #grd.grd#'; kl=kl+1;
-data{kl,1}=        'Anglat =  0.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Grdang =  0.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Filgrd = #enc.enc#'; kl=kl+1;
-data{kl,1}=sprintf('MNKmax = %d %d %d',M,N,K); kl=kl+1;
-data{kl,1}=sprintf('Thick  = %0.7E',Thick(1)); kl=kl+1;
+[fid,fname_local]=write_local_and_copy('open',file_name,'overwrite',~check_existing);
+fprintf(fid,'%s\r\n','Ident  = #Delft3D-FLOW 3.56.29165#');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Filcco = #grd.grd#');
+fprintf(fid,'%s\r\n','Anglat =  0.0000000e+000');
+fprintf(fid,'%s\r\n','Grdang =  0.0000000e+000');
+fprintf(fid,'%s\r\n','Filgrd = #enc.enc#');
+fprintf(fid,'%s\r\n',sprintf('MNKmax = %d %d %d',M,N,K));
+fprintf(fid,'%s\r\n',sprintf('Thick  = %0.7E',Thick(1)));
 for cl=1:numel(Thick)-1
-data{kl,1}=sprintf('         %0.7E',Thick(cl+1)); kl=kl+1;
+    fprintf(fid,'%s\r\n',sprintf('         %0.7E',Thick(cl+1)));
 end
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Fildep = #dep.dep#'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Commnt =                 no. dry points: 0'; kl=kl+1;
-data{kl,1}=        'Commnt =                 no. thin dams: 0'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Itdate = #2000-01-01#'; kl=kl+1;
-data{kl,1}=sprintf('Tunit  = #%s#',Tunit); kl=kl+1;
-data{kl,1}=sprintf('Tstart = %0.12E',Tstart*Tfact); kl=kl+1;
-data{kl,1}=sprintf('Tstop  = %0.12E',Tstop*Tfact); kl=kl+1;
-data{kl,1}=sprintf('Dt     = %0.12E',Dt*Tfact); kl=kl+1;
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Fildep = #dep.dep#');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Commnt =                 no. dry points: 0');
+fprintf(fid,'%s\r\n','Commnt =                 no. thin dams: 0');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Itdate = #2000-01-01#');
+fprintf(fid,'%s\r\n',sprintf('Tunit  = #%s#',Tunit));
+fprintf(fid,'%s\r\n',sprintf('Tstart = %0.12E',Tstart*Tfact));
+fprintf(fid,'%s\r\n',sprintf('Tstop  = %0.12E',Tstop*Tfact));
+fprintf(fid,'%s\r\n',sprintf('Dt     = %0.12E',Dt*Tfact));
 if restart==1
-data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
+    fprintf(fid,'%s\r\n','Restid  = #trim-restart#');
 % data{kl,1}=        'Restid_timeindex  = 1'; kl=kl+1; % Index in the map-file for restarting. Either this or the time must match. 
 %for restarting from a map-file, set `restid` to the map-file (in the same
 %folder as the new mdf-file) and set the right index with
@@ -141,150 +141,153 @@ data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
 % Restid = trim-r036r
 % Restid_timeindex = 41
 end
-data{kl,1}=        'Tzone  = 0'; kl=kl+1;
-data{kl,1}=sprintf('Filtd  = #%s#',simdef.mdf.thd); kl=kl+1; %thin dams
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
+fprintf(fid,'%s\r\n','Tzone  = 0');
+[~,fname,fext]=fileparts(simdef.file.thd);
+fprintf(fid,'%s\r\n',sprintf('Filtd  = #%s#',sprintf('%s%s',fname,fext))); %thin dams
+fprintf(fid,'%s\r\n','Commnt =                  ');
 %Sub1 = #STWI# %'S'alinity, 'T'emperaure, 'I'secondary flow and 'W'ind
 %Sub2 = #PCW#  %'P'articles, 'W'ave, 'C'onstituents
 if secflow==1
-data{kl ,1}=        'Sub1   = #   I#'; kl=kl+1; %with computation of advection-diffusion of secondary flow intensity
+    fprintf(fid,'%s\r\n','Sub1   = #   I#'); %with computation of advection-diffusion of secondary flow intensity
 else
-data{kl ,1}=        'Sub1   = #    #'; kl=kl+1; %without computation of advection-diffusion of secondary flow intensity
+    fprintf(fid,'%s\r\n','Sub1   = #    #'); %without computation of advection-diffusion of secondary flow intensity
 end
 Sub2='   ';
 if any(simdef.tra.SedTyp~=3)
     Sub2(3)='C';
 end
-data{kl,1}=sprintf('Sub2   = #%s#',Sub2); kl=kl+1;
+fprintf(fid,'%s\r\n',sprintf('Sub2   = #%s#',Sub2));
 for kf=1:nf
     if simdef.tra.SedTyp(kf)~=3
-data{kl,1}=sprintf('Namc%d = #Sediment%d#   ',kf,kf); kl=kl+1;
+        fprintf(fid,'%s\r\n',sprintf('Namc%d = #Sediment%d#   ',kf,kf));
     end %sedtyp
 end %kf
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Wnsvwp = #N#'; kl=kl+1;
-data{kl,1}=        'Wndint = #Y#'; kl=kl+1;
-data{kl,1}=        'Commnt =                 initial conditions from initial conditions file'; kl=kl+1;
-data{kl,1}=        'Filic  = #fini.ini#                 '; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Commnt =                 no. open boundaries: 2'; kl=kl+1;
-data{kl,1}=        'Filbnd = #bnd.bnd#'; kl=kl+1;
-data{kl,1}=        'FilbcT = #bct.bct#'; kl=kl+1;
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Wnsvwp = #N#');
+fprintf(fid,'%s\r\n','Wndint = #Y#');
+fprintf(fid,'%s\r\n','Commnt =                 initial conditions from initial conditions file');
+fprintf(fid,'%s\r\n','Filic  = #fini.ini#                 ');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Commnt =                 no. open boundaries: 2');
+fprintf(fid,'%s\r\n','Filbnd = #bnd.bnd#');
+fprintf(fid,'%s\r\n','FilbcT = #bct.bct#');
 if ~isempty(simdef.file.bcc)
-data{kl,1}=        'Filbcc = #bcc.bcc#'; kl=kl+1;
+    fprintf(fid,'%s\r\n','Filbcc = #bcc.bcc#');
 end
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Ag     =  9.8100000e+000'; kl=kl+1;
-data{kl,1}=        'Rhow   =  1.0000000e+003'; kl=kl+1;
-data{kl,1}=        'Tempw  =  1.5000000e+001'; kl=kl+1;
-data{kl,1}=        'Salw   =  0.0000000e+001'; kl=kl+1;
-data{kl,1}=        'Wstres =  6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002  7.2300000e-003  1.0000000e+002'; kl=kl+1;
-data{kl,1}=        'Rhoa   =  1.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Betac  =  1.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Equili = #N#'; kl=kl+1; %flag for computation of equilibrium secondary flow
-data{kl,1}=        'Tkemod = #K-epsilon   #'; kl=kl+1; %turbulence closure model #Constant    #, #Algebraic #, #K-epsilon   #
-data{kl,1}=        'Ktemp  = 0'; kl=kl+1;
-data{kl,1}=        'Fclou  =  0.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Sarea  =  0.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Temint = #Y#'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Ag     =  9.8100000e+000');
+fprintf(fid,'%s\r\n','Rhow   =  1.0000000e+003');
+fprintf(fid,'%s\r\n','Tempw  =  1.5000000e+001');
+fprintf(fid,'%s\r\n','Salw   =  0.0000000e+001');
+fprintf(fid,'%s\r\n','Wstres =  6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002  7.2300000e-003  1.0000000e+002');
+fprintf(fid,'%s\r\n','Rhoa   =  1.0000000e+000');
+fprintf(fid,'%s\r\n','Betac  =  1.0000000e+000');
+fprintf(fid,'%s\r\n','Equili = #N#'); %flag for computation of equilibrium secondary flow
+fprintf(fid,'%s\r\n','Tkemod = #K-epsilon   #'); %turbulence closure model #Constant    #, #Algebraic #, #K-epsilon   #
+fprintf(fid,'%s\r\n','Ktemp  = 0');
+fprintf(fid,'%s\r\n','Fclou  =  0.0000000e+000');
+fprintf(fid,'%s\r\n','Sarea  =  0.0000000e+000');
+fprintf(fid,'%s\r\n','Temint = #Y#');
+fprintf(fid,'%s\r\n','Commnt =                  ');
 switch simdef.mdf.FrictType
     case 0
-data{kl,1}=        'Roumet = #C#'; kl=kl+1; %C, W
+        fprintf(fid,'%s\r\n','Roumet = #C#'); %C, W
     case 2
-data{kl,1}=        'Roumet = #W#'; kl=kl+1; %C, W
+        fprintf(fid,'%s\r\n','Roumet = #W#'); %C, W
     otherwise
         error('in Delft3D-4, friction can only be chezy or White-Colebrook')
 end
-data{kl,1}=sprintf('Ccofu  =  %0.7E',C); kl=kl+1;
-data{kl,1}=sprintf('Ccofv  =  %0.7E',C); kl=kl+1;
-data{kl,1}=        'Xlo    =  0.0000000e+000'; kl=kl+1;
-data{kl,1}=sprintf('Vicouv =  %0.7E',Vicouv); kl=kl+1;
-data{kl,1}=sprintf('Dicouv =  %0.7E',Dicouv); kl=kl+1;
-data{kl,1}=sprintf('Vicoww =  %0.7E',Vicoww); kl=kl+1;
-data{kl,1}=sprintf('Dicoww =  %0.7E',Dicoww); kl=kl+1;
-data{kl,1}=        'Htur2d = #N#'; kl=kl+1;
+fprintf(fid,'%s\r\n',sprintf('Ccofu  =  %0.7E',C));
+fprintf(fid,'%s\r\n',sprintf('Ccofv  =  %0.7E',C));
+fprintf(fid,'%s\r\n','Xlo    =  0.0000000e+000');
+fprintf(fid,'%s\r\n',sprintf('Vicouv =  %0.7E',Vicouv));
+fprintf(fid,'%s\r\n',sprintf('Dicouv =  %0.7E',Dicouv));
+fprintf(fid,'%s\r\n',sprintf('Vicoww =  %0.7E',Vicoww));
+fprintf(fid,'%s\r\n',sprintf('Dicoww =  %0.7E',Dicoww));
+fprintf(fid,'%s\r\n','Htur2d = #N#');
 if simdef.mdf.Idensform==2 %It cannot be switched off in D3D4. 
-data{kl,1}=        'DenFrm = #UNESCO#'; kl=kl+1;
+    fprintf(fid,'%s\r\n','DenFrm = #UNESCO#');
 end
-data{kl,1}=sprintf('Irov   = %d',wall_rough); kl=kl+1;
-data{kl,1}=sprintf('Z0v    = %0.7E',wall_ks/30); kl=kl+1;
+fprintf(fid,'%s\r\n',sprintf('Irov   = %d',wall_rough));
+fprintf(fid,'%s\r\n',sprintf('Z0v    = %0.7E',wall_ks/30));
 if simdef.mor.morphology
-data{kl,1}=sprintf('Filsed = #%s#',simdef.mdf.sed); kl=kl+1;
-data{kl,1}=sprintf('Filmor = #%s#',simdef.mdf.mor); kl=kl+1;
+    [~,fname,fext]=fileparts(simdef.file.sed);
+    fprintf(fid,'%s\r\n',sprintf('Filsed = #%s#',sprintf('%s%s',fname,fext)));
+    [~,fname,fext]=fileparts(simdef.file.mor);
+    fprintf(fid,'%s\r\n',sprintf('Filmor = #%s#',sprintf('%s%s',fname,fext)));
 end
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Iter   =      2'; kl=kl+1;
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Iter   =      2');
 %data{kl,1}=        'Dryflp = #YES#'; kl=kl+1;
-data{kl,1}=sprintf('Dpsopt = #%s#',Dpsopt); kl=kl+1; %flow depth at cell centres: DP=depth specified at cell centres; kl=kl+1; MAX; kl=kl+1; MEAN; kl=kl+1; MIN
+fprintf(fid,'%s\r\n',sprintf('Dpsopt = #%s#',Dpsopt)); %flow depth at cell centres: DP=depth specified at cell centres; kl=kl+1; MAX; kl=kl+1; MEAN; kl=kl+1; MIN
 if ischar(Dpuopt)
-data{kl,1}=sprintf('Dpuopt = #%s#',Dpuopt); kl=kl+1; %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#, 
+    fprintf(fid,'%s\r\n',sprintf('Dpuopt = #%s#',Dpuopt)); %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#,
 else
     switch Dpuopt
         case 1
-data{kl,1}='Dpuopt = #min_dps#'; kl=kl+1; %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#, 
+            fprintf(fid,'%s\r\n','Dpuopt = #min_dps#'); %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#,
         case 2
-data{kl,1}='Dpuopt = #mean_dps#'; kl=kl+1; %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#,             
+            fprintf(fid,'%s\r\n','Dpuopt = #mean_dps#'); %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#,
     end
 end
-data{kl,1}=        'Dryflc =  1.0000000e-003'; kl=kl+1;
-data{kl,1}=        'Dco    = -9.9900000e+002'; kl=kl+1;
-data{kl,1}=        'Tlfsmo =  0.0000000e+001'; kl=kl+1; %smoothing boundary conditions time [6.0000000e+001]
-data{kl,1}=        'ThetQH =  0.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Forfuv = #Y#'; kl=kl+1;
-data{kl,1}=        'Forfww = #N#'; kl=kl+1;
-data{kl,1}=        'Sigcor = #N#'; kl=kl+1;
-data{kl,1}=        'Trasol = #Cyclic-method#'; kl=kl+1;
-data{kl,1}=        'Momsol = #Cyclic#'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Commnt =                 no. discharges: 0'; kl=kl+1;
-data{kl,1}=        'Commnt =                 no. observation points: 0'; kl=kl+1;
-if isfield(simdef.mdf,'obs_name') && Flhis_dt>0
-data{kl,1}=sprintf('Filsta= #%s#',simdef.mdf.obs_filename); kl=kl+1;
-data{kl,1}=        'Fmtsta= #FR#'; kl=kl+1;
+fprintf(fid,'%s\r\n','Dryflc =  1.0000000e-003');
+fprintf(fid,'%s\r\n','Dco    = -9.9900000e+002');
+fprintf(fid,'%s\r\n','Tlfsmo =  0.0000000e+001'); %smoothing boundary conditions time [6.0000000e+001]
+fprintf(fid,'%s\r\n','ThetQH =  0.0000000e+000');
+fprintf(fid,'%s\r\n','Forfuv = #Y#');
+fprintf(fid,'%s\r\n','Forfww = #N#');
+fprintf(fid,'%s\r\n','Sigcor = #N#');
+fprintf(fid,'%s\r\n','Trasol = #Cyclic-method#');
+fprintf(fid,'%s\r\n','Momsol = #Cyclic#');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Commnt =                 no. discharges: 0');
+fprintf(fid,'%s\r\n','Commnt =                 no. observation points: 0');
+if isfield(simdef.file,'obs') && ~isempty(simdef.file.obs) && Flhis_dt>0
+    [~,fname,fext]=fileparts(simdef.file.obs);
+    fprintf(fid,'%s\r\n',sprintf('Filsta= #%s#',sprintf('%s%s',fname,fext)));
+    fprintf(fid,'%s\r\n','Fmtsta= #FR#');
 end
-if isfield(simdef.mdf,'crs_name') && Flhis_dt>0
-data{kl,1}=sprintf('Filcrs= #%s#',simdef.mdf.crs_filename); kl=kl+1;
-data{kl,1}=        'Fmtcrs= #FR#'; kl=kl+1;
+if isfield(simdef.file,'crs') && ~isempty(simdef.file.crs) && Flhis_dt>0
+    [~,fname,fext]=fileparts(simdef.file.crs);
+    fprintf(fid,'%s\r\n',sprintf('Filcrs= #%s#',sprintf('%s%s',fname,fext)));
+    fprintf(fid,'%s\r\n','Fmtcrs= #FR#');
 end
-data{kl,1}=        'Commnt =                 no. drogues: 0'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'Commnt =                 no. cross sections: 0'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'SMhydr = #YYYYY#     '; kl=kl+1;
-data{kl,1}=        'SMderv = #YYYYYY#    '; kl=kl+1;
-data{kl,1}=        'SMproc = #YYYYYYYYYY#'; kl=kl+1;
-data{kl,1}=        'PMhydr = #YYYYYY#    '; kl=kl+1;
-data{kl,1}=        'PMderv = #YYY#       '; kl=kl+1;
-data{kl,1}=        'PMproc = #YYYYYYYYYY#'; kl=kl+1;
-data{kl,1}=        'SHhydr = #YYYY#      '; kl=kl+1;
-data{kl,1}=        'SHderv = #YYYYY#     '; kl=kl+1;
-data{kl,1}=        'SHproc = #YYYYYYYYYY#'; kl=kl+1;
-data{kl,1}=        'SHflux = #YYYY#      '; kl=kl+1;
-data{kl,1}=        'PHhydr = #YYYYYY#    '; kl=kl+1;
-data{kl,1}=        'PHderv = #YYY#       '; kl=kl+1;
-data{kl,1}=        'PHproc = #YYYYYYYYYY#'; kl=kl+1;
-data{kl,1}=        'PHflux = #YYYY#      '; kl=kl+1;
+fprintf(fid,'%s\r\n','Commnt =                 no. drogues: 0');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','Commnt =                 no. cross sections: 0');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','SMhydr = #YYYYY#     ');
+fprintf(fid,'%s\r\n','SMderv = #YYYYYY#    ');
+fprintf(fid,'%s\r\n','SMproc = #YYYYYYYYYY#');
+fprintf(fid,'%s\r\n','PMhydr = #YYYYYY#    ');
+fprintf(fid,'%s\r\n','PMderv = #YYY#       ');
+fprintf(fid,'%s\r\n','PMproc = #YYYYYYYYYY#');
+fprintf(fid,'%s\r\n','SHhydr = #YYYY#      ');
+fprintf(fid,'%s\r\n','SHderv = #YYYYY#     ');
+fprintf(fid,'%s\r\n','SHproc = #YYYYYYYYYY#');
+fprintf(fid,'%s\r\n','SHflux = #YYYY#      ');
+fprintf(fid,'%s\r\n','PHhydr = #YYYYYY#    ');
+fprintf(fid,'%s\r\n','PHderv = #YYY#       ');
+fprintf(fid,'%s\r\n','PHproc = #YYYYYYYYYY#');
+fprintf(fid,'%s\r\n','PHflux = #YYYY#      ');
 % data{kl,1}=sprintf('Flmap  =  0.0000000e+000 %0.7e   %0.7e',Flmap_dt,ceil(Tstop/Flmap_dt)*Flmap_dt); kl=kl+1;
-data{kl,1}=sprintf('Flmap  =  %0.12e %0.12e   %0.12e',Flmap_dt(1)*Tfact,Flmap_dt(2)*Tfact,Tstop*Tfact); kl=kl+1;
-data{kl,1}=sprintf('Flhis  =  0.0000000e+000 %0.12e   %0.12e',Flhis_dt*Tfact,Tstop*Tfact); kl=kl+1;
-data{kl,1}=        'Flpp   =  0.0000000e+000 0    0.0000000e+000'; kl=kl+1;
-data{kl,1}=        'Flrst  = 0'; kl=kl+1;
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
-data{kl,1}=        'CflMsg = #Y#'; kl=kl+1; %write more than 100 CFL cheks
-data{kl,1}=        'Online = #N#'; kl=kl+1;
-data{kl,1}=        'chezy  = #Y#'; kl=kl+1; %output Chezy friction
-data{kl,1}=        'Commnt =                  '; kl=kl+1;
+fprintf(fid,'%s\r\n',sprintf('Flmap  =  %0.12e %0.12e   %0.12e',Flmap_dt(1)*Tfact,Flmap_dt(2)*Tfact,Tstop*Tfact));
+fprintf(fid,'%s\r\n',sprintf('Flhis  =  0.0000000e+000 %0.12e   %0.12e',Flhis_dt*Tfact,Tstop*Tfact));
+fprintf(fid,'%s\r\n','Flpp   =  0.0000000e+000 0    0.0000000e+000');
+fprintf(fid,'%s\r\n','Flrst  = 0');
+fprintf(fid,'%s\r\n','Commnt =                  ');
+fprintf(fid,'%s\r\n','CflMsg = #Y#'); %write more than 100 CFL cheks
+fprintf(fid,'%s\r\n','Online = #N#');
+fprintf(fid,'%s\r\n','chezy  = #Y#'); %output Chezy friction
+fprintf(fid,'%s\r\n','Commnt =                  ');
 if isfield(simdef.mdf,'AddTim') && strcmpi(AddTim,'Y')
-   data{kl,1}=        'AddTim = #Y#               '; kl=kl+1;
+    fprintf(fid,'%s\r\n','AddTim = #Y#               ');
 end
 % if simdef.mor.morphology
 % data{kl,1}=sprintf('TraFrm = #%s#',simdef.mdf.tra); 
 % end
 
-%% WRITE
+%% CLOSE
 
-% file_name=fullfile(dire_sim,sprintf('sim_%s%s.mdf',runid_serie,runid_number));
-% writetxt(file_name,data)
-writetxt(file_name,data,'check_existing',check_existing);
+write_local_and_copy('close',fid,fname_local,file_name)
