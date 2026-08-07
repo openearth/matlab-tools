@@ -13,12 +13,6 @@
 %generate water level and velocity in rectangular grid 
 
 %INPUT:
-%   -simdef.file.grd
-%   -simdef.ini.s
-%   -simdef.grd.K
-%   -simdef.ini.h
-%   -simdef.ini.etab
-%   -simdef.mdf.secflow
 %
 %OUTPUT:
 %   -a .ini compatible with D3D is created in file_name
@@ -58,7 +52,7 @@ M=grd.mmax;
 N=grd.nmax;
 
 
-K=simdef.grd.K;
+K=simdef.mdf.K;
 h=simdef.ini.h;
 % u=simdef.ini.u;
 etab=simdef.ini.etab;

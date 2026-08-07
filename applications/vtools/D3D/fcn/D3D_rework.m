@@ -97,11 +97,17 @@ simdef=D3D_rework_nodes(simdef); %default is serial computation in h7
 if simdef.D3D.structure==1
     simdef.file=isfield_default(simdef.file,'runid',fullfile(simdef.D3D.dire_sim,'runid'));
 end
-simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
-simdef.file=isfield_default(simdef.file,'exe_grd2map',simdef.file.exe_input);
-simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\');
-simdef.file=isfield_default(simdef.file,'PillarFile','');
 
+
+if simdef.D3D.structure==1
+    simdef.file=isfield_default(simdef.file,'software','p:\d-hydro\delft3d4\Delft3D-FLOW_WAVE\6.04.02.142586\');
+    simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
+else
+    simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\');
+    simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.02 HMWQ\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
+end
+simdef.file=isfield_default(simdef.file,'exe_grd2map',simdef.file.exe_input);
+simdef.file=isfield_default(simdef.file,'PillarFile','');
 simdef.file=isfield_default(simdef.file,'StructureFile','');
 simdef.file=isfield_default(simdef.file,'CrossDefFile','');
 simdef.file=isfield_default(simdef.file,'CrossLocFile','');
@@ -311,14 +317,12 @@ end
 if ~isfield(simdef.mdf,'Flhis_dt')
     simdef.mdf.Flhis_dt=0;
 end
-if simdef.mdf.Flhis_dt==0
-    % simdef.mdf.obs_filename='';
-    simdef.file.obs='';
 
-    % simdef.mdf.crs_filename='';
-    simdef.file.crs='';
+simdef.file=isfield_default(simdef.file,'obs','');
+if simdef.mdf.Flhis_dt==0
+    simdef.file.obs='';
 end
-if ~isfield(simdef.file,'obs') && simdef.mdf.Flhis_dt>0
+if isempty(simdef.file.obs) && simdef.mdf.Flhis_dt>0 && isfield(simdef.mdf,'obs_cord') && ~isempty(simdef.mdf.obs_cord)
     switch simdef.D3D.structure
         case 1
             simdef.file.obs=fullfile(simdef.D3D.dire_sim,'obs.obs');
@@ -329,7 +333,11 @@ end
 [~,fname,fext]=fileparts(simdef.file.obs);
 simdef.mdf.obs_filename=sprintf('%s%s',fname,fext);
 
-if ~isfield(simdef.file,'crs') && simdef.mdf.Flhis_dt>0
+simdef.file=isfield_default(simdef.file,'crs','');
+if simdef.mdf.Flhis_dt==0
+    simdef.file.crs='';
+end
+if isempty(simdef.file.crs) && simdef.mdf.Flhis_dt>0 && isfield(simdef.mdf,'crs_cord') && ~isempty(simdef.mdf.crs_cord)
     switch simdef.D3D.structure
         case 1
             simdef.file.crs=fullfile(simdef.D3D.dire_sim,'crs.crs');
@@ -1056,7 +1064,7 @@ simdef.mor=isfield_default(simdef.mor,'morphology',0);
 %     return
 % end
 
-simdef.file=isfield_default(simdef.file,'mor','mor.mor');
+simdef.file=isfield_default(simdef.file,'mor',fullfile(simdef.D3D.dire_sim,'mor.mor'));
 
 if simdef.mor.morphology
     simdef.mdf.BedlevType=1; 
@@ -1138,7 +1146,7 @@ function simdef=D3D_rework_sed(simdef)
 
 simdef.sed.dummy=NaN;
 
-simdef.file=isfield_default(simdef.file,'sed','sed.sed');
+simdef.file=isfield_default(simdef.file,'sed',fullfile(simdef.D3D.dire_sim,'sed.sed'));
 
 if isfield(simdef.sed,'dk')==0
     simdef.sed.dk=[];

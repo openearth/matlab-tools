@@ -62,7 +62,7 @@ end
 time=increase_final_time(time,Tstop,Dt);
 time_Q=increase_final_time(time_Q,Tstop,Dt);
 
-if simdef.grd.K>1
+if simdef.mdf.K>1
     str_typeb='Logarithmic';
 else
     str_typeb='Uniform';

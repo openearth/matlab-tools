@@ -39,7 +39,7 @@ grd_type=simdef.grd.type;
 
 %% FILE
 
-if simdef.grd.K>1
+if simdef.mdf.K>1
     str_typeb='Logarithmic';
 else
     str_typeb='Uniform';

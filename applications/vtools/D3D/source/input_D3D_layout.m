@@ -89,6 +89,13 @@ simdef.mdf.obs_cord= [x_obs(:),y_obs(:)]; %coordinates of the observations point
 for ks=1:size(simdef.mdf.obs_cord,1)
 simdef.mdf.obs_name{ks}=strrep(sprintf('%05.0f_%05.0f',simdef.mdf.obs_cord(ks,1),simdef.mdf.obs_cord(ks,2)),' ',''); %name of the observation stations [-] [cell(np,1)] e.g. {'s1','s2'}
 end
+        %crs
+simdef.mdf.crs_cord=[simdef.grd.L*3/4,simdef.grd.dy                  ,simdef.grd.L*3/4,simdef.grd.B/2+simdef.grd.dy/2;...
+                     simdef.grd.L*3/4,simdef.grd.B/2+simdef.grd.dy   ,simdef.grd.L*3/4,simdef.grd.B+simdef.grd.dy/2  ];
+for kcrs=1:size(simdef.mdf.crs_cord,1)
+simdef.mdf.crs_name{kcrs}=sprintf('crs_%02d',kcrs);
+end
+
 % simdef.mdf.Flrst_dt=      3600; %restart file time interval [s] [double(1,1)] e.g. [60]
 simdef.mdf.izbndpos=        0; %position of the boundary: 0=in ghost cell (D3D); 1=at edge cell [-] [double(1,1)]. If 0, the value in the BC will be shifted half a cell. 
 
