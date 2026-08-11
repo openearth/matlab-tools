@@ -352,8 +352,19 @@ switch what_do
                 fclose(fid);
 %                 messageOut(NaN,sprintf('File written: %s',fname));
             case '.shp'
-                shapewrite(fname,'polyline',{stru_in.xy},{})  
-%                 messageOut(NaN,sprintf('File written: %s',fname));
+                if isfield(stru_in,'xy') && size(stru_in.xy,2)==2
+                    shapewrite(fname,'polyline',{stru_in.xy},{})  
+                elseif (isfield(stru_in,'xy') && size(stru_in.xy,2)==3) || (isfield(stru_in,'xyz'))
+                    if (isfield(stru_in,'xy') && size(stru_in.xy,2)==3)
+                        xyz=stru_in.xy;
+                    else
+                        xyz=stru_in.xyz;
+                    end
+                    pol=xyz2polyline(xyz);
+                    shapewrite(fname,pol);
+                else
+                    error('The xy field should have 2 or 3 columns')
+                end
             case '' %writing a series of tim files
 %                 D3D_io_input('write',dire_out,stru_in,reftime);
 %                 dire_out = folder to write  
