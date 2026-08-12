@@ -44,7 +44,7 @@ s=isfield_default(in_p,'s',NaN,'output','array');
 s_mea=isfield_default(in_p,'s_mea',NaN,'output','array');
 val_mea=isfield_default(in_p,'val_mea',NaN,'output','array');
 val0=isfield_default(in_p,'val0',NaN,'output','array');
-tim=isfield_default(in_p,'tim',NaN,'output','array');
+tim=isfield_default(in_p,'tim',NaN,'output','array'); %datenum
 
 %already return if we cannot plot
 sv=size(val);
