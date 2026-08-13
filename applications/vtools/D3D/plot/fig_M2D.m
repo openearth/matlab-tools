@@ -139,15 +139,6 @@ if isfield(in_p,'font_size')==0
     in_p.font_size=10;
 end
 
-in_p=isfield_default(in_p,'do_measurements',0);
-if in_p.do_measurements
-    in_p=isfield_default(in_p,'fig_size',[0,0,25,14]);
-    in_p=isfield_default(in_p,'fig_margin_top',2.5);
-else
-    in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
-end
-in_p=gdm_parse_fig_margins(in_p);
-
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     [in_p.xlims,in_p.ylims]=D3D_gridInfo_lims(in_p.gridInfo);
 end
@@ -158,13 +149,21 @@ in_p=isfield_default(in_p,'tiles',{});
 in_p=isfield_default(in_p,'fpath_tiles',fullfile(pwd,'tiles.mat'));
 in_p=isfield_default(in_p,'path_tiles',pwd);
 
-in_p=isfield_default(in_p,'measurements_images',cell(0,0));
-if isempty(in_p.measurements_images)
+in_p=isfield_default(in_p,'measurements_images',cell(0,0)); %by default, no measurement images
+if isempty(in_p.measurements_images) %if no measurement images, we do not plot measurements
     in_p.do_measurements=0;
-else
+else %if there are measurement images, we check whether to plot them or not
     in_p=isfield_default(in_p,'do_measurements',1);
 end
 
+%size depending on whether we plot measurements or not
+if in_p.do_measurements
+    in_p=isfield_default(in_p,'fig_size',[0,0,25,14]);
+    in_p=isfield_default(in_p,'fig_margin_top',2.5);
+else
+    in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
+end
+in_p=gdm_parse_fig_margins(in_p);
 
 in_p=isfield_default(in_p,'contour_lines',NaN);
 if ~isnan(in_p.contour_lines)
