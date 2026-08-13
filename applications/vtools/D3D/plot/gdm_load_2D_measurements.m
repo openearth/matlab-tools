@@ -40,33 +40,85 @@ if is_diff
     measurements_images_0=gdm_load_2D_measurements_single(in_p,measurements_structure,time_dtime_0,x_lims,y_lims);   
     nf0=numel(measurements_images_0);
     nf=numel(measurements_images);
-    if nf0~=nf
-        messageOut(NaN,'The number of tiles for the reference time is different than for the final time. I cannot substract them.')
+    if nf0==0 || nf==0
+        messageOut(NaN,'There are no measurements at the reference time or at the final time. I cannot substract them.')
         measurements_images=cell(0,0);
         tim_mea_dtime_mean=NaT;
         return
     end
+    bol_keep=true(nf,1);
     for kf=1:nf
         switch measurements_images{kf}.type
             case 'tif'
-                [~,x_ia,x_ib] = intersect(measurements_images{kf}.x,measurements_images_0{kf}.x);
-                [~,y_ia,y_ib] = intersect(measurements_images{kf}.y,measurements_images_0{kf}.y);
-                measurements_images{kf}.x=measurements_images{kf}.x(x_ia);
-                measurements_images{kf}.y=measurements_images{kf}.y(y_ia);
-                measurements_images{kf}.z=measurements_images{kf}.z(y_ia,x_ia)-measurements_images_0{kf}.z(y_ib,x_ib);
-                measurements_images{kf}.mask=max(cat(3,measurements_images{kf}.mask(y_ia,x_ia),measurements_images_0{kf}.z(y_ib,x_ib)),[],3); 
+                [measurements_images{kf},bol_keep(kf)]=substract_tif(measurements_images{kf},measurements_images_0);
             case 'shp'
+                if nf0~=nf
+                    error('The number of shapefiles at the reference time is different than at the final time. I cannot substract them.')
+                end
                 measurements_images{kf}.z=measurements_images{kf}.z-measurements_images_0{kf}.z;
             otherwise
                 error('Unknown measurements image type: %s',measurements_images{kf}.type)
         end %switch
     end %kf
+    measurements_images=measurements_images(bol_keep);
+    if isempty(measurements_images)
+        messageOut(NaN,'The measurements at the reference time and at the final time do not overlap. I cannot substract them.')
+        measurements_images=cell(0,0);
+        tim_mea_dtime_mean=NaT;
+        return
+    end
 end %if
 
 end %function 
 
 %%
 %% FUNCTIONS
+%%
+
+function [measurements_image,bol_keep]=substract_tif(measurements_image,measurements_images_0)
+
+%The reference data set does not need to be tiled in the same way as the final one. Every reference
+%image contributes to the part of the final image it overlaps with. 
+
+nx=numel(measurements_image.x);
+ny=numel(measurements_image.y);
+
+z_dif=NaN(ny,nx);
+mask_dif=zeros(ny,nx);
+bol_dif=false(ny,nx);
+
+nf0=numel(measurements_images_0);
+for kf0=1:nf0
+    if ~strcmp(measurements_images_0{kf0}.type,'tif')
+        error('Measurements at the reference time are of type %s while measurements at the final time are of type tif. I cannot substract them.',measurements_images_0{kf0}.type)
+    end
+    [~,x_ia,x_ib]=intersect(measurements_image.x,measurements_images_0{kf0}.x);
+    [~,y_ia,y_ib]=intersect(measurements_image.y,measurements_images_0{kf0}.y);
+    if isempty(x_ia) || isempty(y_ia)
+        continue
+    end
+    z_dif(y_ia,x_ia)=measurements_image.z(y_ia,x_ia)-measurements_images_0{kf0}.z(y_ib,x_ib);
+    mask_dif(y_ia,x_ia)=min(measurements_image.mask(y_ia,x_ia),measurements_images_0{kf0}.mask(y_ib,x_ib)); %valid only where both are valid
+    bol_dif(y_ia,x_ia)=true;
+end %kf0
+
+bol_keep=any(bol_dif(:));
+if ~bol_keep
+    return
+end
+
+%crop to the region covered by the reference data set
+bol_x=any(bol_dif,1);
+bol_y=any(bol_dif,2);
+
+measurements_image.x=measurements_image.x(bol_x);
+measurements_image.y=measurements_image.y(bol_y);
+measurements_image.z=z_dif(bol_y,bol_x);
+measurements_image.mask=mask_dif(bol_y,bol_x);
+measurements_image.mask(isnan(measurements_image.z))=0;
+
+end %function
+
 %%
 
 function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements_single(in_p,measurements_structure,time_dtime,x_lims,y_lims)
