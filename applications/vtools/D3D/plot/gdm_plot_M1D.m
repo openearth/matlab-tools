@@ -46,6 +46,7 @@ flg_loc=isfield_default(flg_loc,'do_xtv',0);
 flg_loc=isfield_default(flg_loc,'do_xtv_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_xtv_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_xvallt',0);
+flg_loc=isfield_default(flg_loc,'do_xvallt_diff_s',0);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 flg_loc=isfield_default(flg_loc,'do_diff_t_first_time',1);
 
@@ -402,7 +403,7 @@ for kbr=1:nbr %branches
                 lims_loc=lims;
 
                 tag_ref='xvallt';
-                in_p.val=squeeze(data_T(:,ksim,:)); %ksim=1 because we are assuming there is only one simulation
+                in_p.val=squeeze(data_T(:,ksim,:)); 
                 in_p=reset_is(in_p);
                 % in_p.val0=data_0;
                 % if do_measurements
@@ -412,6 +413,34 @@ for kbr=1:nbr %branches
                 % end
                 in_p.leg_str=flg_loc.leg_str;
                 in_p.do_time=1;
+                in_p.tim=time_dnum_v;
+                in_p.cmap=brewermap(nt,'RdYlBu');
+
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,sprintf('%s',tag_fig),tag_serie);
+                runid=simdef(ksim).file.runid;
+
+                fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
+            end %ksim
+        end
+
+        %% all times in same figure xvt difference with reference simulation
+        
+        if flg_loc.do_xvallt_diff_s && nt>1 && ksim~=kref
+            for ksim=1:nsim
+                lims_loc=lims;
+
+                tag_ref='xvallt_diff_s';
+                in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,kref,:)); 
+                in_p=reset_is(in_p);
+                % in_p.val0=data_0;
+                % if do_measurements
+                %     in_p.plot_mea=true;
+                %     in_p.val_mea=data_mea.y;
+                %     in_p.s_mea=data_mea.x;
+                % end
+                in_p.is_diff_s=0;
+                in_p.do_time=1;
+                in_p.leg_str=flg_loc.leg_str;
                 in_p.tim=time_dnum_v;
                 in_p.cmap=brewermap(nt,'RdYlBu');
 
