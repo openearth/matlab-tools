@@ -881,9 +881,45 @@ function geotiffwrite(filename, bbox, image, bit_depth, option)
       end
    end
 
+   %  Prepare ifd.Software, 305 and ifd.DateTime, 306 (both ASCII, optional)
+   %
+   if isfield(option, 'Software')
+      ifd.Software = [uint8(char(option.Software(:)')), uint8(0)];
+   end
+
+   if isfield(option, 'DateTime')
+      ifd.DateTime = [uint8(char(option.DateTime(:)')), uint8(0)];
+   end
+
+   %  Prepare GDAL_METADATA, 42112 and GDAL_NODATA, 42113 (both ASCII, optional)
+   %
+   if isfield(option, 'GDAL_METADATA')
+      ifd.GDAL_METADATA = [uint8(char(option.GDAL_METADATA(:)')), uint8(0)];
+   end
+
+   if isfield(option, 'GDAL_NODATA')
+      ifd.GDAL_NODATA = [uint8(char(option.GDAL_NODATA(:)')), uint8(0)];
+   end
+
    %  Write TIFF info
    %
    num_entry = 16;				% 16 basic entries
+
+   if isfield(ifd, 'Software')
+      num_entry = num_entry + 1;
+   end
+
+   if isfield(ifd, 'DateTime')
+      num_entry = num_entry + 1;
+   end
+
+   if isfield(ifd, 'GDAL_METADATA')
+      num_entry = num_entry + 1;
+   end
+
+   if isfield(ifd, 'GDAL_NODATA')
+      num_entry = num_entry + 1;
+   end
 
    if isfield(ifd, 'ColorMap')
       num_entry = num_entry + 1;
@@ -1074,6 +1110,22 @@ function geotiffwrite(filename, bbox, image, bit_depth, option)
    fwrite(fid, ifd.ResolutionUnit, 'uint16');
    fwrite(fid, 0, 'uint16');
 
+   if isfield(ifd, 'Software')
+      fwrite(fid, 305, 'uint16');	% Software
+      fwrite(fid, 2, 'uint16');	% ascii
+      fwrite(fid, length(ifd.Software), 'uint32');	% count
+      fwrite(fid, ifd_end, 'uint32');
+      ifd_end = ifd_end + length(ifd.Software);
+   end
+
+   if isfield(ifd, 'DateTime')
+      fwrite(fid, 306, 'uint16');	% DateTime
+      fwrite(fid, 2, 'uint16');	% ascii
+      fwrite(fid, length(ifd.DateTime), 'uint32');	% count
+      fwrite(fid, ifd_end, 'uint32');
+      ifd_end = ifd_end + length(ifd.DateTime);
+   end
+
    if isfield(option, 'ColorMap')
       fwrite(fid, 320, 'uint16');
       fwrite(fid, 3, 'uint16');		% uint16
@@ -1169,6 +1221,22 @@ function geotiffwrite(filename, bbox, image, bit_depth, option)
       ifd_end = ifd_end + length(GeoAsciiParamsTag);
    end
 
+   if isfield(ifd, 'GDAL_METADATA')
+      fwrite(fid, 42112, 'uint16');	% GDAL_METADATA
+      fwrite(fid, 2, 'uint16');	% ascii
+      fwrite(fid, length(ifd.GDAL_METADATA), 'uint32');	% count
+      fwrite(fid, ifd_end, 'uint32');
+      ifd_end = ifd_end + length(ifd.GDAL_METADATA);
+   end
+
+   if isfield(ifd, 'GDAL_NODATA')
+      fwrite(fid, 42113, 'uint16');	% GDAL_NODATA
+      fwrite(fid, 2, 'uint16');	% ascii
+      fwrite(fid, length(ifd.GDAL_NODATA), 'uint32');	% count
+      fwrite(fid, ifd_end, 'uint32');
+      ifd_end = ifd_end + length(ifd.GDAL_NODATA);
+   end
+
    %  IFD is terminated with 4-byte offset to the next IFD,
    %  or 0 if there are none.
    %
@@ -1184,6 +1252,14 @@ function geotiffwrite(filename, bbox, image, bit_depth, option)
    fwrite(fid, 1, 'uint32');				% 282
    fwrite(fid, ifd.YResolution, 'uint32');		% 283
    fwrite(fid, 1, 'uint32');				% 283
+
+   if isfield(ifd, 'Software')
+      fwrite(fid, ifd.Software, 'uint8');		% 305
+   end
+
+   if isfield(ifd, 'DateTime')
+      fwrite(fid, ifd.DateTime, 'uint8');		% 306
+   end
 
    if isfield(option, 'ColorMap')
       fwrite(fid, ifd.ColorMap, 'uint16');		% 320
@@ -1218,6 +1294,14 @@ function geotiffwrite(filename, bbox, image, bit_depth, option)
 
    if GeoAsciiOffset > 0
       fwrite(fid, GeoAsciiParamsTag, 'uint8');		% 34737
+   end
+
+   if isfield(ifd, 'GDAL_METADATA')
+      fwrite(fid, ifd.GDAL_METADATA, 'uint8');		% 42112
+   end
+
+   if isfield(ifd, 'GDAL_NODATA')
+      fwrite(fid, ifd.GDAL_NODATA, 'uint8');		% 42113
    end
 
    fclose(fid);

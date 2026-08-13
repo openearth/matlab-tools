@@ -6,6 +6,11 @@ function structured_xyz_to_tiff(xyz, fpath_output_tif, epsg_code, varargin)
 % structured_xyz_to_tiff(..., 'NoDataValue', value)
 % structured_xyz_to_tiff(..., 'SplitTiles', true)
 % structured_xyz_to_tiff(..., 'TileSize', [nRows nCols])
+% structured_xyz_to_tiff(..., 'BandName', name)
+% structured_xyz_to_tiff(..., 'BandDirection', direction)
+% structured_xyz_to_tiff(..., 'Unit', unit)
+% structured_xyz_to_tiff(..., 'Description', description)
+% structured_xyz_to_tiff(..., 'Software', software)
 %
 % Inputs:
 %   xyz             - N x 3 numeric array [x, y, z], structured on a grid.
@@ -16,12 +21,20 @@ function structured_xyz_to_tiff(xyz, fpath_output_tif, epsg_code, varargin)
 % Name-value options:
 %   DuplicatePolicy - How to handle duplicate (x,y) points:
 %                     'error' (default), 'last', or 'mean'.
-%   NoDataValue     - Optional numeric value to replace NaN before writing.
-%                     If omitted, NaN values are kept.
+%   NoDataValue     - Numeric value used to replace NaN before writing and
+%                     stored in the GDAL_NODATA tag so downstream readers
+%                     (e.g. TIF_info/TIF_bounding_boxes) can parse the file.
+%                     Default: single(3.4028234663852886e+38), matching the
+%                     sample reference TIFF (20211206_21MAS12ml12_2.tif).
 %   SplitTiles      - When true, split output into multiple TIFF tiles.
 %                     Default: false.
 %   TileSize        - Tile size [nRows nCols] for SplitTiles=true.
 %                     Default: [3139 2390] (size of sample reference TIFF).
+%   BandName        - GDAL_METADATA Band_Name item. Default: 'Hoogte'.
+%   BandDirection   - GDAL_METADATA Band_Direction item. Default: 'Height'.
+%   Unit            - GDAL_METADATA UNITTYPE item. Default: 'm'.
+%   Description     - GDAL_METADATA DESCRIPTION item. Default: same as BandName.
+%   Software        - TIFF Software tag. Default: 'MATLAB structured_xyz_to_tiff'.
 
 p = inputParser;
 p.FunctionName = mfilename;
@@ -29,15 +42,28 @@ addRequired(p, 'xyz', @(v) isnumeric(v) && ismatrix(v) && size(v, 2) == 3 && ~is
 addRequired(p, 'fpath_output_tif', @(v) (ischar(v) || isstring(v)) && strlength(string(v)) > 0);
 addRequired(p, 'epsg_code', @(v) isnumeric(v) && isscalar(v) && isfinite(v) && v > 0 && mod(v,1) == 0);
 addParameter(p, 'DuplicatePolicy', 'error', @(v) any(strcmpi(string(v), ["error", "last", "mean"])));
-addParameter(p, 'NoDataValue', [], @(v) isempty(v) || (isnumeric(v) && isscalar(v) && isfinite(v)));
+addParameter(p, 'NoDataValue', single(3.4028234663852886e+38), @(v) isnumeric(v) && isscalar(v) && isfinite(v));
 addParameter(p, 'SplitTiles', false, @(v) islogical(v) || isnumeric(v));
 addParameter(p, 'TileSize', [3139, 2390], @(v) isnumeric(v) && numel(v) == 2 && all(isfinite(v)) && all(v > 0));
+addParameter(p, 'BandName', 'Hoogte', @(v) (ischar(v) || isstring(v)) && strlength(string(v)) > 0);
+addParameter(p, 'BandDirection', 'Height', @(v) (ischar(v) || isstring(v)) && strlength(string(v)) > 0);
+addParameter(p, 'Unit', 'm', @(v) (ischar(v) || isstring(v)) && strlength(string(v)) > 0);
+addParameter(p, 'Description', '', @(v) ischar(v) || isstring(v));
+addParameter(p, 'Software', 'MATLAB structured_xyz_to_tiff', @(v) (ischar(v) || isstring(v)) && strlength(string(v)) > 0);
 parse(p, xyz, fpath_output_tif, epsg_code, varargin{:});
 
 xyz = p.Results.xyz;
 fpath_output_tif = char(p.Results.fpath_output_tif);
 epsg_code = double(p.Results.epsg_code);
 duplicate_policy = lower(string(p.Results.DuplicatePolicy));
+band_name = char(p.Results.BandName);
+band_direction = char(p.Results.BandDirection);
+unit_type = char(p.Results.Unit);
+description = char(p.Results.Description);
+if isempty(description)
+    description = band_name;
+end
+software = char(p.Results.Software);
 nodata_value = p.Results.NoDataValue;
 split_tiles = logical(p.Results.SplitTiles);
 tile_size = round(double(p.Results.TileSize(:)'));
@@ -134,6 +160,14 @@ end
 x_limits = [x_u(1) - 0.5 * dx, x_u(end) + 0.5 * dx];
 y_limits = [y_u(1) - 0.5 * dy, y_u(end) + 0.5 * dy];
 
+metadata = struct( ...
+    'NoDataValue', nodata_value, ...
+    'BandName', band_name, ...
+    'BandDirection', band_direction, ...
+    'Unit', unit_type, ...
+    'Description', description, ...
+    'Software', software);
+
 if ~split_tiles
     n_valid = sum(~isnan(Z), 'all');
     if n_valid == 0
@@ -142,11 +176,9 @@ if ~split_tiles
     end
 
     Z_write = Z;
-    if ~isempty(nodata_value)
-        Z_write(isnan(Z_write)) = nodata_value;
-    end
+    Z_write(isnan(Z_write)) = nodata_value;
 
-    write_one_tif(fpath_output_tif, Z_write, x_limits, y_limits, dx, dy, epsg_code);
+    write_one_tif(fpath_output_tif, Z_write, x_limits, y_limits, dx, dy, epsg_code, metadata);
 
     n_total = numel(Z);
     fill_pct = 100 * n_valid / n_total;
@@ -188,13 +220,11 @@ for r0 = 1:tile_rows:nrows
         x_limits_tile = [x_tile_left, x_tile_right];
         y_limits_tile = [y_tile_bottom, y_tile_top];
 
-        if ~isempty(nodata_value)
-            Z_tile(isnan(Z_tile)) = nodata_value;
-        end
+        Z_tile(isnan(Z_tile)) = nodata_value;
 
         tile_name = sprintf('%s_r%05d_c%05d%s', fname_out, r0, c0, fext_out);
         fpath_tile = fullfile(fdir_out, tile_name);
-        write_one_tif(fpath_tile, Z_tile, x_limits_tile, y_limits_tile, dx, dy, epsg_code);
+        write_one_tif(fpath_tile, Z_tile, x_limits_tile, y_limits_tile, dx, dy, epsg_code, metadata);
         n_written = n_written + 1;
     end
 end
@@ -208,13 +238,35 @@ end
 
 end
 
-function write_one_tif(fpath_output_tif, Z_write, x_limits, y_limits, dx, dy, epsg_code)
+function write_one_tif(fpath_output_tif, Z_write, x_limits, y_limits, dx, dy, epsg_code, metadata)
 
 if exist('geotiffwrite', 'file') ~= 2
     error('structured_xyz_to_tiff:MissingGeoTiffWriter', ...
         ['No geotiffwrite function found on MATLAB path. Add OET path ', ...
          'or install Mapping Toolbox.']);
 end
+
+is_valid = Z_write ~= metadata.NoDataValue & ~isnan(Z_write);
+if any(is_valid, 'all')
+    stats_min = min(Z_write(is_valid), [], 'all');
+    stats_max = max(Z_write(is_valid), [], 'all');
+else
+    stats_min = 0;
+    stats_max = 0;
+end
+
+gdal_metadata = sprintf(['<GDALMetadata>\n', ...
+    '  <Item name="Band_Direction" sample="0">%s</Item>\n', ...
+    '  <Item name="Band_Name" sample="0">%s</Item>\n', ...
+    '  <Item name="STATISTICS_MAXIMUM" sample="0">%.15g</Item>\n', ...
+    '  <Item name="STATISTICS_MINIMUM" sample="0">%.15g</Item>\n', ...
+    '  <Item name="UNITTYPE" sample="0" role="unittype">%s</Item>\n', ...
+    '  <Item name="DESCRIPTION" sample="0" role="description">%s</Item>\n', ...
+    '</GDALMetadata>\n'], ...
+    metadata.BandDirection, metadata.BandName, stats_max, stats_min, ...
+    metadata.Unit, metadata.Description);
+gdal_nodata = sprintf('%.16g', double(metadata.NoDataValue));
+date_time = datestr(now, 'yyyy:mm:dd HH:MM:SS');
 
 % Try Mapping Toolbox API first, then fallback to OET's standalone writer.
 try
@@ -236,6 +288,10 @@ catch me_map
         option.ProjLinearUnitsGeoKey = 9001; % metre
         option.ModelPixelScaleTag = [dx; dy; 0];
         option.ModelTiepointTag = [0; 0; 0; x_limits(1); y_limits(2); 0];
+        option.GDAL_NODATA = gdal_nodata;
+        option.GDAL_METADATA = gdal_metadata;
+        option.Software = metadata.Software;
+        option.DateTime = date_time;
         geotiffwrite(fpath_output_tif, [], single(Z_write), 32, option);
     catch me_oet
         error('structured_xyz_to_tiff:GeoTiffWriteFailed', ...
