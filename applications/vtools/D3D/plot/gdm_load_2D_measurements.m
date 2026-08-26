@@ -95,6 +95,14 @@ for kf0=1:nf0
     [~,x_ia,x_ib]=intersect(measurements_image.x,measurements_images_0{kf0}.x);
     [~,y_ia,y_ib]=intersect(measurements_image.y,measurements_images_0{kf0}.y);
     if isempty(x_ia) || isempty(y_ia)
+        messageOut(NaN,'The measurements at the reference time and at the final time do not overlap. I will try to shift the final image by 0.5 units.')
+        measurements_image.x=measurements_image.x+0.5;
+        measurements_image.y=measurements_image.y+0.5;
+        [~,x_ia,x_ib]=intersect(measurements_image.x,measurements_images_0{kf0}.x);
+        [~,y_ia,y_ib]=intersect(measurements_image.y,measurements_images_0{kf0}.y);
+    end
+    if isempty(x_ia) || isempty(y_ia)
+        messageOut(NaN,'The measurements at the reference time and at the final time do not overlap even when shifting.')
         continue
     end
     z_dif(y_ia,x_ia)=measurements_image.z(y_ia,x_ia)-measurements_images_0{kf0}.z(y_ib,x_ib);
@@ -266,6 +274,11 @@ nf=numel(measurements_structure);
 
 [x_plot,y_plot]=fcn_vector_plot_tif(measurements_structure,x_lims,y_lims);
 
+% fprintf('min x = %f\n', min(x_plot));
+% fprintf('min y = %f\n', min(y_plot));
+% fprintf('max x = %f\n', max(x_plot));
+% fprintf('max y = %f\n', max(y_plot));
+
 nx=numel(x_plot);
 ny=numel(y_plot);
 z_plot=NaN(ny,nx);
@@ -297,6 +310,21 @@ for kf=1:nf
     bol_x_read=ismember(measurements_images_loc.x,x_plot);
     bol_y_read=ismember(measurements_images_loc.y,y_plot);
 
+    %% DEBUG
+
+    % [idx_1,min_1]=absmintol(x_plot,1.76168e5,10)
+    % [idx_2,min_2]=absmintol(measurements_images_loc.x,1.76168e5,10)
+    % figure;
+    % hold on; 
+    % plot(x_plot,ones(size(x_plot)),'-*r')
+    % plot(measurements_images_loc.x,ones(size(measurements_images_loc.x)),'-ob'); 
+    % figure;
+    % hold on; 
+    % plot(y_plot,ones(size(y_plot)),'-*r')
+    % plot(measurements_images_loc.y,ones(size(measurements_images_loc.y)),'-ob'); 
+
+
+    %%
     if (sum(bol_x_read) == 0)
         warning('x-coordinate shifted by 0.5 in %s', fpath);
         bol_x_plot=ismember(x_plot,measurements_images_loc.x+0.5);
@@ -308,8 +336,24 @@ for kf=1:nf
         bol_y_read=ismember(measurements_images_loc.y+0.5,y_plot);
     end
 
-    z_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.z(bol_y_read,bol_x_read);
-    m_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.mask(bol_y_read,bol_x_read);
+    %only add values which are not alreay filled (i.e., are not NaN)
+    z_plot_existing=z_plot(bol_y_plot,bol_x_plot);
+    m_plot_existing=m_plot(bol_y_plot,bol_x_plot); %extract existing mask values in the selected region
+    bol_xy_nan=isnan(z_plot_existing); %matrix of NaN values in the selected region
+
+    z_plot_loc=measurements_images_loc.z(bol_y_read,bol_x_read);
+    z_plot_existing(bol_xy_nan)=z_plot_loc(bol_xy_nan); %replace nan values in existing region by corresponding values from the loaded measurements
+    z_plot(bol_y_plot,bol_x_plot)=z_plot_existing;
+
+    m_plot_loc=measurements_images_loc.mask(bol_y_read,bol_x_read);
+    m_plot_existing(bol_xy_nan)=m_plot_loc(bol_xy_nan); %replace nan values in existing region by corresponding values from the loaded measurements
+    m_plot(bol_y_plot,bol_x_plot)=m_plot_existing;
+
+    %% DEBUG
+
+    % figure
+    % imagesc(x_plot,fliplr(y_plot),z_plot)
+    % axis equal
 
 end %kf
 
@@ -384,16 +428,24 @@ function y_plot=fcn_vector_plot(y_vector,y_lims)
 
 dy=diff(y_vector(1:2));
 [y_vector_sort,idx_y] = sort(y_vector);
-idx = (y_lims(1)-y_vector_sort(1))/dy;
-yl=y_vector_sort(1)+idx*dy;
-%yl=y_vector(idx_y(idx));
-idx = (y_lims(2)-y_vector_sort(1))/dy;
-yu=y_vector_sort(1)+idx*dy;
-%yu=y_vector(idx_y(idx));
-y_plot=yl:abs(dy):yu;
-if sign(dy)<0
-    y_plot=fliplr(y_plot); %y is reversed
-end
+idx=absmintol(y_vector_sort,y_lims(1),'tol',1e10);
+yl=y_vector_sort(idx);
+idx=absmintol(y_vector_sort,y_lims(2),'tol',1e10);
+yu=y_vector_sort(idx);
+y_plot=construct_y_plot(yl,yu,dy);
+% y_plot=yl:abs(dy):yu;
+% if sign(dy)<0
+%     y_plot=fliplr(y_plot); %y is reversed
+% end
+
+%% DEBUG
+
+% fprintf('%f\n',y_vector_sort(1))
+% fprintf('%f\n',y_vector(1))
+% fprintf('%f\n',yl)
+% fprintf('%f\n',yu)
+
+%%
 
 end %function
 
@@ -401,11 +453,68 @@ end %function
 
 function [x_plot,y_plot]=fcn_vector_plot_tif(measurements_structure,x_lims,y_lims)
 
-fpath=measurements_structure(1).Filename;
+dy=NaN;
+dx=NaN;
+yl=NaN;
+yu=NaN;
+xl=NaN;
+xu=NaN;
+for kf=1:numel(measurements_structure)
 
-[~,~,x_vector,y_vector]=TIF_info(fpath);
+    fpath=measurements_structure(kf).Filename;
+    [~,~,x_vector,y_vector]=TIF_info(fpath);
 
-y_plot=fcn_vector_plot(y_vector,y_lims);
-x_plot=fcn_vector_plot(x_vector,x_lims);
+    dy_loc=diff(y_vector(1:2));
+    dx_loc=diff(x_vector(1:2));
+
+    if isnan(dy)
+        dy=dy_loc;
+    end
+    if isnan(dx)
+        dx=dx_loc;
+    end
+    if dx~=dx_loc || dy~=dy_loc
+        messageOut(NaN,sprintf('Inconsistent grid spacing in %s\n', fpath));
+    end
+
+    y_plot_loc=fcn_vector_plot(y_vector,y_lims);
+    x_plot_loc=fcn_vector_plot(x_vector,x_lims);
+
+    yl=min(yl,min(y_plot_loc));
+    yu=max(yu,max(y_plot_loc));
+    xl=min(xl,min(x_plot_loc));
+    xu=max(xu,max(x_plot_loc));
+
+end
+
+y_plot=construct_y_plot(yl,yu,dy);
+x_plot=construct_y_plot(xl,xu,dx);
+
+%% DEBUG
+
+% fprintf('%f\n',x_vector)
+% fprintf('%f\n',y_vector)
+% fprintf('%f\n',x_vector(1))
+% fprintf('%f\n',y_vector(1))
+% fprintf('%f\n',x_lims(1))
+% fprintf('%f\n',x_lims(2))
+% fprintf('%f\n',y_lims(1))
+% fprintf('%f\n',y_lims(2))
+
+% figure;
+% hold on;
+% plot(x_vector)
+
+
+end %function
+
+%%
+
+function y_plot=construct_y_plot(yl,yu,dy)
+
+y_plot=yl:abs(dy):yu;
+if sign(dy)<0
+    y_plot=fliplr(y_plot); %y is reversed
+end
 
 end %function

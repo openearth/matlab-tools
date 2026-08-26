@@ -28,6 +28,9 @@
 
 function [image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname)
 
+if ~exist(fname,'file')
+    error('File %s does not exist',fname);
+end
 image_info=imfinfo(fname);
 
 ncolumns=image_info.Width;
