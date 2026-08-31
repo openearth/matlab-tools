@@ -21,17 +21,37 @@
 %       MinX, MaxX, MinY, MaxY = bounding box in spatial coordinates
 
 %
+%OPTIONAL (pair input)
+%   - image_info = output of <imfinfo> for the same file. Reading it is
+%       expensive, so pass it when calling repeatedly on the same file.
+%
 %TODO:
 %   -
 %
 %E.G.
 
-function [image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname)
+function [image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname,varargin)
 
-if ~exist(fname,'file')
-    error('File %s does not exist',fname);
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'image_info',[]);
+
+parse(parin,varargin{:});
+
+image_info=parin.Results.image_info;
+
+%% CALC
+
+if isempty(image_info)
+    if ~exist(fname,'file')
+        error('File %s does not exist',fname);
+    end
+    image_info=imfinfo(fname);
+elseif ~strcmp(canonical_path(image_info.Filename),canonical_path(fname))
+    error('The given <image_info> belongs to %s but the requested file is %s',image_info.Filename,fname)
 end
-image_info=imfinfo(fname);
 
 ncolumns=image_info.Width;
 nrows=image_info.Height;
@@ -78,5 +98,19 @@ no_data=fcn_data_type(no_data);
 
 x_vector=x0+((0:ncolumns-1).*dx);
 y_vector=y0-((0:nrows   -1).*dy);
+
+end %function
+
+%%
+
+function fpath=canonical_path(fpath)
+
+%<imfinfo> resolves the path, so a path holding <..> must be resolved
+%before it can be compared
+try
+    fpath=char(java.io.File(fpath).getCanonicalPath());
+catch
+    %the comparison stays literal if java is not available
+end
 
 end %function

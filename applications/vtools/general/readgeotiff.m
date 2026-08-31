@@ -28,6 +28,8 @@
 %OPTIONAL (pair input)
 %   - x_limits = lower and uper limit of data to take from tif in x-direction
 %   - y_limits = lower and uper limit of data to take from tif in y-direction
+%   - image_info = output of <imfinfo> for the same file. Reading it is
+%       expensive, so pass it when calling repeatedly on the same file.
 %
 %TODO:
 %   -
@@ -51,17 +53,19 @@ parin=inputParser;
 
 addOptional(parin,'x_limits',[-inf,inf]);
 addOptional(parin,'y_limits',[-inf,inf]);
+addOptional(parin,'image_info',[]);
 
 parse(parin,varargin{:});
 
 x_limits=parin.Results.x_limits;
 y_limits=parin.Results.y_limits;
+image_info=parin.Results.image_info;
 
 %% CALC
 
 %% get image information
 
-[image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname);
+[image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname,'image_info',image_info);
 
 %% filter
 

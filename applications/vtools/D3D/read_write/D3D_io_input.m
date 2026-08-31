@@ -14,6 +14,10 @@
 %   pli:
 %       -pli.name: name of the polyline (char) or number of the polyline (double)
 %       -pli.xy: coordinates
+%   shp (polygons with attributes, same format as when reading with 'read_val'):
+%       -shp.xy.XY: cell array with one [np,2] or [np,3] matrix per polygon
+%       -shp.val{k}.Name: field name (at most 10 characters once the geometry prefix is stripped)
+%       -shp.val{k}.Val: numeric vector or cell string with one entry per polygon
 %
 %READ:
 %   OPTIONAL INPUT
@@ -352,7 +356,9 @@ switch what_do
                 fclose(fid);
 %                 messageOut(NaN,sprintf('File written: %s',fname));
             case '.shp'
-                if isfield(stru_in,'xy') && size(stru_in.xy,2)==2
+                if isfield(stru_in,'xy') && isstruct(stru_in.xy) && isfield(stru_in.xy,'XY')
+                    shp_write_polygons(fname,stru_in);
+                elseif isfield(stru_in,'xy') && size(stru_in.xy,2)==2
                     shapewrite(fname,'polyline',{stru_in.xy},{})  
                 elseif (isfield(stru_in,'xy') && size(stru_in.xy,2)==3) || (isfield(stru_in,'xyz'))
                     if (isfield(stru_in,'xy') && size(stru_in.xy,2)==3)
@@ -490,5 +496,52 @@ switch units
         error('add')
 end
 tim_dtim=tim_ref_dtim+tim_un;
+
+end %function
+
+%%
+
+function shp_write_polygons(fname,stru_in)
+
+XY=stru_in.xy.XY;
+if ~iscell(XY)
+    error('<stru_in.xy.XY> must be a cell array with one [np,2] or [np,3] matrix per polygon')
+end
+npol=numel(XY);
+XY=XY(:);
+
+%<shapewrite> only takes two columns and cannot cope with the NaN rows that
+%separate the parts of a multipart polygon. Every part is a closed ring, so
+%<shapewrite> recovers the parts from the repeated first point of each ring.
+XY=cellfun(@(X)X(~any(isnan(X(:,1:2)),2),1:2),XY,'UniformOutput',false);
+
+if isfield(stru_in,'val') && ~isempty(stru_in.val)
+    nval=numel(stru_in.val);
+    names=cell(nval,1);
+    values=cell(nval,1);
+    for kv=1:nval
+        %<shp2struct> prefixes the field name with the geometry type
+        name_loc=stru_in.val{kv}.Name;
+        idx_col=strfind(name_loc,':');
+        if ~isempty(idx_col)
+            name_loc=name_loc(idx_col(end)+1:end);
+        end
+        names{kv}=name_loc;
+        values{kv}=stru_in.val{kv}.Val;
+        if numel(values{kv})~=npol
+            error('Field <%s> has %d records but there are %d polygons',names{kv},numel(values{kv}),npol)
+        end
+    end
+else
+    names={};
+    values={};
+end
+
+shapewrite(fname,'polygon',XY);
+
+if ~isempty(names)
+    [fdir,fnam]=fileparts(fname);
+    DBF_write(fullfile(fdir,sprintf('%s.dbf',fnam)),names,values);
+end
 
 end %function
