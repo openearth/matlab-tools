@@ -77,6 +77,17 @@ col_fin=find(x_vector<x_limits(2),1,'last');
 row_ini=find(y_vector<y_limits(2),1,'first');
 row_fin=find(y_vector>y_limits(1),1,'last');
 
+%the limits may not contain any coordinate, in which case there is nothing
+%to read
+if isempty(col_ini) || isempty(col_fin) || isempty(row_ini) || isempty(row_fin) || ...
+        col_fin<col_ini || row_fin<row_ini
+    I.x=[];
+    I.y=[];
+    I.z=[];
+    I.mask=[];
+    return
+end
+
 %% apply filter to coordinates
 
 I.x=x_vector(col_ini:1:col_fin);
