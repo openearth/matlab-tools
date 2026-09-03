@@ -39,11 +39,25 @@ function fpath_mat=shp_LR_to_mat(fpath_shp_in,date_v,fpath_axis,fpath_output,var
 
 %groups to gather, given as the values of <locatie> that make up each group
 tag_group={ ...
-    {'L1'},{'L2'},{'L3'},{'L4'}, ...
-    {'R1'},{'R2'},{'R3'},{'R4'}, ...
-    {'L1','R1'},{'L2','R2'},{'L3','R3'},{'L4','R4'}, ...
-    {'L1','L2'},{'R1','R2'}, ...
-    {'L2','L3'},{'R2','R3'}};
+    {'L1'},... %L1
+    {'L2'},... %L2
+    {'L3'},... %L3
+    {'L4'}, ... %L4
+    {'R1'},... %R1
+    {'R2'},... %R2
+    {'R3'},... %R3
+    {'R4'}, ... %R4
+    {'L1','R1'}, ... %L1R1
+    {'L2','L1','R1','R2'}, ... %L2R2
+    {'L3','L2','L1','R1','R2','R3'}, ... %L3R3
+    {'L4','L3','L2','L1','R1','R2','R3','R4'}, ... %L4R4
+    {'L1','L2'},... %L1L2
+    {'L1','L2','L3'},... %L1L3
+    {'L2','L3'},... %L2L3
+    {'R1','R2'},... %R1R2
+    {'R1','R2','R3'},... %R1R3
+    {'R2','R3'},... %R2R3
+    };
 
 unit_bl='bed elevation [m+NAP]';
 unit_ds='bed slope [-]';
@@ -146,7 +160,7 @@ tim_dnum=datenum(date_v); %#ok<DATNM>
 
 for kg=1:ngr
     mem=tag_group{kg};
-    tag=strjoin(mem,'');
+    tag=first_last_string(mem);
     fpath_mat{kg}=fullfile(fpath_output,sprintf('%s_measured.mat',tag));
 
     messageOut(NaN,sprintf('Group %d of %d: %s',kg,ngr,tag));
@@ -190,8 +204,8 @@ end %function
 %% GATHER_GROUP
 %%
 
-%Polygons of the group. A group of two members is merged pairwise by the
-%part of <code_uniek> that both members share.
+%Polygons of the group. Members are merged by the part of <code_uniek> that
+%all members share.
 
 function [rkm_g,x_g,y_g,val_g]=gather_group(pol,val,cnt,mem)
 
@@ -205,48 +219,48 @@ if nmem==1
     val_g=val(idx,:);
     return
 end
-if nmem~=2
-    error('A group must have one or two members')
-end
-
-idx_a=find(strcmp(pol.locatie,mem{1}));
-idx_b=find(strcmp(pol.locatie,mem{2}));
 
 %<code_uniek> is the value of <locatie> followed by a key shared by all the
-%polygons of the same cross section
-key_a=strip_locatie(pol.code(idx_a),mem{1});
-key_b=strip_locatie(pol.code(idx_b),mem{2});
+%polygons of the same cross section. Keep only keys present for every member.
+idx_g=cell(nmem,1);
+idx_g{1}=find(strcmp(pol.locatie,mem{1}));
+key_g=strip_locatie(pol.code(idx_g{1}),mem{1});
+for km=2:nmem
+    idx_m=find(strcmp(pol.locatie,mem{km}));
+    key_m=strip_locatie(pol.code(idx_m),mem{km});
+    [key_g,ia,ib]=intersect(key_g,key_m,'stable');
+    idx_g{1}=idx_g{1}(ia);
+    idx_g{km}=idx_m(ib);
+end
 
-[key_g,ia,ib]=intersect(key_a,key_b,'stable');
 if isempty(key_g)
     rkm_g=[]; x_g=[]; y_g=[]; val_g=[];
     return
 end
 
-idx_a=idx_a(ia);
-idx_b=idx_b(ib);
+idx_g=cat(2,idx_g{:});
 
 %the geometry is weighted with the area, which does not depend on the survey
-w_a=pol.area(idx_a);
-w_b=pol.area(idx_b);
-w_s=w_a+w_b;
+w_g=pol.area(idx_g);
+w_s=sum(w_g,2);
 
-rkm_g=(pol.rkm(idx_a).*w_a+pol.rkm(idx_b).*w_b)./w_s;
-x_g=(pol.x(idx_a).*w_a+pol.x(idx_b).*w_b)./w_s;
-y_g=(pol.y(idx_a).*w_a+pol.y(idx_b).*w_b)./w_s;
+rkm_g=sum(pol.rkm(idx_g).*w_g,2)./w_s;
+x_g=sum(pol.x(idx_g).*w_g,2)./w_s;
+y_g=sum(pol.y(idx_g).*w_g,2)./w_s;
 
 %the values are weighted with the number of cells, which does depend on the
 %survey, so that a polygon without data does not count
-c_a=cnt(idx_a,:);
-c_b=cnt(idx_b,:);
-v_a=val(idx_a,:);
-v_b=val(idx_b,:);
+c_s=zeros(size(cnt(idx_g(:,1),:)));
+val_g=zeros(size(c_s));
+for km=1:nmem
+    c_m=cnt(idx_g(:,km),:);
+    v_m=val(idx_g(:,km),:);
+    v_m(isnan(v_m))=0;
+    c_s=c_s+c_m;
+    val_g=val_g+v_m.*c_m;
+end
 
-v_a(isnan(v_a))=0;
-v_b(isnan(v_b))=0;
-
-c_s=c_a+c_b;
-val_g=(v_a.*c_a+v_b.*c_b)./c_s;
+val_g=val_g./c_s;
 val_g(c_s==0)=NaN;
 
 end %function
@@ -258,6 +272,20 @@ end %function
 function key=strip_locatie(code,tag)
 
 key=regexprep(code,sprintf('^%s',tag),'');
+
+end %function
+
+%%
+%% FIRST_LAST_STRING
+%%
+
+function tag=first_last_string(str_cell)
+
+if numel(str_cell)==1
+    tag=str_cell{1};
+else
+    tag=[str_cell{1},str_cell{end}];
+end
 
 end %function
 
