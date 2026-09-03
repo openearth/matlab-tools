@@ -526,6 +526,13 @@
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).measurements=fpaths.fdir_data_stations;
 
+%% CRS (cross-sections of 1D simulation)
+
+% tag='CRS';
+% in_plot.(tag).do=1;
+% in_plot.(tag).tim=[datetime(2005,1,1,'TimeZone','+00:00'),datetime(2025,01,01,'TimeZone','+00:00')]; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).crs_name={'br_SongHong_3_ch_4000.0000000'};
+
 %%
 
 function D3D_plot(in_plot_original)
