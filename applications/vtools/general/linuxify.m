@@ -14,12 +14,14 @@
 
 function path_lin=linuxify(path_win)
 
-if numel(path_win)>=2 && strcmp(path_win(2),':') %windows path
+if numel(path_win)>=2 && strcmp(path_win(2),':') %windows absolute path
     path_win=small_p(path_win);
     path_lin=strcat('/',path_win);
     path_lin=strrep(path_lin,':','');
     path_lin=strrep(path_lin,'\','/');
-else
+elseif ismember('\',path_win) %windows relative path
+    path_lin=strrep(path_win,'\','/');
+else %linux path
     path_lin=path_win;
 end
 
