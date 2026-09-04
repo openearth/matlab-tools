@@ -86,6 +86,7 @@ nf=size(data_index,1);
 
 for kf=1:nf
     fpath_file=data_index.file{kf};
+    fpath_file=adapt_path_local_machine(fpath_file);
     [fdir_file,~,fext]=fileparts(fpath_file);
     switch fext
         case '.vrt'
