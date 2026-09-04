@@ -95,6 +95,7 @@ for kf=1:nf
             %ATTENTION! I am assuming the path given is always relative. It could
             %be checked somehow.
             fpath_rel_cell={bounding_box.Filename};
+            fpath_rel_cell=adapt_path_local_machine(fpath_rel_cell);
             fpath_full_cell=cellfun(@(X)fullfile(fdir_file,X),fpath_rel_cell,'UniformOutput',false);
             bounding_box=struct_assign_val(bounding_box,'Filename',fpath_full_cell);
         case '.tif'
