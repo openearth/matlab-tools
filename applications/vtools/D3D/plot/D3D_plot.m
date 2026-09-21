@@ -277,6 +277,11 @@
 % in_plot.(tag).var_idx={1:1:11}; %for 11 size fractions
 % in_plot.(tag).do_area=1;
 %%%
+%%plot of stacked sediment composition
+% in_plot.(tag).var={'Fak'};
+% in_plot.(tag).var_idx={1:1:12}; %for 12 size fractions
+% in_plot.(tag).do_area=1;
+%%%
 % in_plot.(tag).rkm={145:1:175}; %river km vectors to average the data; cell(1,nrkm)
 % in_plot.(tag).rkm_plot_tv={[178.5,191.2]}; %river km vectors to average the data; cell(1,nrkm)
 % in_plot.(tag).rkm_name={'1km'}; %name of the river km vector (for saving); cell(1,nrkm)
