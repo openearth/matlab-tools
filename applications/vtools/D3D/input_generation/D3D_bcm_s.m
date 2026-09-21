@@ -146,6 +146,7 @@ switch simdef.bcm.noise_eta
     case 2 %alternate bar
 
         noise_T=simdef.bcm.noise_T;
+        is_fixed_with_time=false;
         if isinf(noise_T) %fixed with time
             is_fixed_with_time=true;
             simdef.bcm.noise_dt=simdef.mdf.Tstop; %in this way there is only one time written in the bcm-file. 
