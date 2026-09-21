@@ -45,6 +45,7 @@ end
 var2key=readtable('labels4all_variable_to_key.csv','TextType','string');
 translations=readtable('labels4all_translation_keys.csv','TextType','string');
 [str_var,un_type,found]=get_translation(varname,lan,var2key,translations);
+str_var=lyrfrac_case(str_var,frac);
 str_var=add_fraction(str_var,frac);
 
 %% using switch case (old)
@@ -363,5 +364,15 @@ end %function
 function str_var=add_fraction(str_var,frac)
 
 str_var=sprintf(str_var,frac);
+
+end
+
+%% 
+function str_var=lyrfrac_case(str_var,frac)
+
+if isempty(frac)
+    %If the fraction is empty, remove the placeholder for size fraction from the string.
+    str_var=strrep(str_var,'of size fraction %d ','');
+end
 
 end
