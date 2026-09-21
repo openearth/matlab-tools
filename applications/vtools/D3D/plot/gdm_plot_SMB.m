@@ -436,6 +436,11 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,var_i
 nvi=numel(var_idx);
 svi=repmat('%02d',1,nvi);
 var_idx_s=sprintf(svi,var_idx);
+%hash if more than one variable index
+if numel(var_idx_s)>2
+    var_idx_s=hash_string(var_idx_s);
+end
+
 
 if isempty(runid)
     fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_ylim_%02d_xlim_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kylim,kxlim));
