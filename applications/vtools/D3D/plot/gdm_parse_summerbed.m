@@ -18,6 +18,18 @@ fid_log=NaN;
 
 flg_loc=isfield_default(flg_loc,'sim_ref',1);
 
+%% existence checks
+
+if isfield(flg_loc,'sb_pol')==0
+    %2DO
+    %if no input, all points taken.
+    error('You need to specify the summerbed polygon `sb_pol`.')
+end
+
+if isfield(flg_loc,'fpath_rkm')==0
+    error('You need to specify the path to the rkm file `fpath_rkm`.')
+end
+
 %% do flags
 
 flg_loc=isfield_default(flg_loc,'do_p',1);
@@ -114,6 +126,9 @@ for krkm=1:nrkmv
     end
 end
 
+if ~iscell(flg_loc.rkm_track)
+    error('rkm track must be a cell of size of `rkm_name`')
+end
 flg_loc=isfield_default(flg_loc,'rkm_track',cell(nrkmv,1)); %if empty, we will use the track
 
 if isempty(flg_loc.rkm_br{1,1}) && isempty(flg_loc.rkm_track{1,1})

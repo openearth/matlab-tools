@@ -22,12 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'sb_pol')==0
-    %2DO
-    %if no input, all points taken.
-    error('You need to specify the summerbed polygon')
-end
-
 flg_loc=gdm_parse_summerbed(flg_loc,simdef);
 
 %% PATHS
