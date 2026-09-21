@@ -61,104 +61,111 @@ depth_average_limits=parin.Results.depth_average_limits;
 
 %% CALC
 
-str_add='';
+str_total='';
 
 %time
 if ~isempty(time_dnum)
-    str_add=sprintf('%s%s',str_add,datestr(time_dnum,'yyyymmddHHMMSS'));
+    str_total=sprintf('%s%s',str_total,datestr(time_dnum,'yyyymmddHHMMSS'));
 end
 
 %time 2
 if ~isempty(time_dnum_2)
-    str_add=sprintf('%s-%s',str_add,datestr(time_dnum_2,'yyyymmddHHMMSS'));
+    str_total=sprintf('%s-%s',str_total,datestr(time_dnum_2,'yyyymmddHHMMSS'));
 end
 
 %station
 if ~isempty(station)
-    str_add=sprintf('%s_%s',str_add,strrep(station,' ','_'));
+    str_total=sprintf('%s_%s',str_total,strrep(station,' ','_'));
 end
 
 %layer
 if ~isempty(layer)
-    nvar=numel(layer);
-    str_w=repmat('%04d_',1,nvar);
-    str_w(end)='';
-    str_w2=strcat('%s_layer_',str_w);
-    str_add=sprintf(str_w2,str_add,layer);
-    str_add=strrep(str_add,' ','');
-    if numel(str_add)>10
-        str_add=hash_string(str_add);
-    end
-
-%     str_add=sprintf('%s_layer_%04d',str_add,layer);
+    str_add=add_numbers(layer,'layer');
+    str_total=sprintf('%s_%s',str_total,str_add); %add to the total string
+    % str_total=strrep(str_total,' ',''); %why should there be spaces?
 end
 
 %pli
 if ~isempty(pli)
-    str_add=sprintf('%s_pli_%s',str_add,strrep(pli,' ',''));
+    str_total=sprintf('%s_pli_%s',str_total,strrep(pli,' ',''));
 end
 
 %pol
 if ~isempty(pol)
-    str_add=sprintf('%s_pol_%s',str_add,strrep(pol,' ',''));
+    str_total=sprintf('%s_pol_%s',str_total,strrep(pol,' ',''));
 end
 
 %iso
 if ~isempty(iso)
-    str_add=sprintf('%s_iso_%s',str_add,strrep(iso,' ',''));
+    str_total=sprintf('%s_iso_%s',str_total,strrep(iso,' ',''));
 end
 
 %var
 if ~isempty(var)
-    str_add=sprintf('%s_var_%s',str_add,strrep(var,' ',''));
+    str_total=sprintf('%s_var_%s',str_total,strrep(var,' ',''));
 end
 
 %stat
 if ~isempty(stat)
-    str_add=sprintf('%s_stat_%s',str_add,strrep(stat,' ',''));
+    str_total=sprintf('%s_stat_%s',str_total,strrep(stat,' ',''));
 end
 
 %sb
 if ~isempty(sb)
-    str_add=sprintf('%s_sb_%s',str_add,strrep(sb,' ',''));
+    str_total=sprintf('%s_sb_%s',str_total,strrep(sb,' ',''));
 end
 
 %var_idx
 if ~isempty(var_idx)
-    nvar=numel(var_idx);
-    str_w=repmat('%02d_',1,nvar);
-    str_w(end)='';
-    str_w2=strcat('%s_var_idx_',str_w);
-    str_add=sprintf(str_w2,str_add,var_idx);
+    str_add=add_numbers(var_idx,'var_idx');
+    str_total=sprintf('%s_%s',str_total,str_add); %add to the total string
 end
 
 %branch
 if ~isempty(branch)
-    str_add=sprintf('%s_branch_%s',str_add,branch);
+    str_total=sprintf('%s_branch_%s',str_total,branch);
 end
 
 %elevation
 if ~isempty(elev) && ~isnan(elev)
-    str_add=sprintf('%s_elev_%5.3f',str_add,elev);
+    str_total=sprintf('%s_elev_%5.3f',str_total,elev);
 end
 
 %depth average
 if ~isempty(depth_average) && depth_average==1
-    str_add=sprintf('%s_da',str_add);
+    str_total=sprintf('%s_da',str_total);
 end
 
 %depth average limits
 if ~isempty(depth_average_limits) && ~isnan(depth_average_limits(1)) && ~all(isinf(depth_average_limits))
-    str_add=sprintf('%s_%5.3f-%5.3f',str_add,depth_average_limits(1),depth_average_limits(2));
+    str_total=sprintf('%s_%5.3f-%5.3f',str_total,depth_average_limits(1),depth_average_limits(2));
 end
 
 %final
-str_add=sprintf('%s_%s.mat',tag,str_add);
-str_add=strrep(str_add,'__','_');
-str_add=strrep(str_add,'_.mat','.mat');
-if strcmp(str_add(1),'_')
-    str_add(1)='';
+str_total=sprintf('%s_%s.mat',tag,str_total);
+str_total=strrep(str_total,'__','_');
+str_total=strrep(str_total,'_.mat','.mat');
+if strcmp(str_total(1),'_')
+    str_total(1)='';
 end
-fpath_mat_tmp=fullfile(fdir_mat,str_add);
+fpath_mat_tmp=fullfile(fdir_mat,str_total);
 
 end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function str_add=add_numbers(layer,str_variable)
+
+nvar=numel(layer);
+str_add=repmat('%02d_',1,nvar); %create format string for each layer number: e.g., '%02d_%02d_%02d_' for 3 layers
+str_add(end)=''; %remove last '_': e.g., '%04d_%04d_%04d' for 3 layers
+str_add=sprintf(str_add,layer); %substitute by actual layer numbers
+%if it is too long (more than 10 characters), hash it to keep the filename manageable
+if numel(str_add)>10
+    str_add=hash_string(str_add);
+end
+str_add=strcat(str_variable,'_',str_add); %add 'layer': e.g. 'layer_%04d_%04d_%04d' for 3 layers
+
+end
