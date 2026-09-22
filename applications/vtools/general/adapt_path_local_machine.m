@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 %
-function fpath=adapt_path_local_machine(fpath)
+function fpath=adapt_path_local_machine(fpath,varargin)
 
 if iscell(fpath)
     for kp=1:numel(fpath)
