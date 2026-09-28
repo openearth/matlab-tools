@@ -968,6 +968,22 @@ simdef.mdf.thd=fname_thd;
 
 simdef.file=isfield_default(simdef.file,'PillarFile','');
 
+%%
+%% OUTPUT
+%%
+
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_crs',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_weir',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_gate',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_fxw',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_thd',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_obs',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_emb',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_dryarea',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_genstruc',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_src',0);
+simdef.mdf=isfield_default(simdef.mdf,'Wrishp_pump',0);
+
 %% RENAME OUT
 
 % simdef.grd.M=M;
