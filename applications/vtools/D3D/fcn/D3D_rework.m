@@ -659,7 +659,8 @@ else
     %     simdef.file.ext=fullfile(simdef.D3D.dire_sim,'ext.ext');
     % end
     simdef.file=isfield_default(simdef.file,'ext','');
-    simdef.mdf.ext='ext.ext';
+    simdef.mdf.ext='';
+
     simdef.file=isfield_default(simdef.file,'IniFieldFile',fullfile(simdef.D3D.dire_sim,'ini.ini'));
     if isfield(simdef.file,'etaw')==0
         simdef.file.etaw=fullfile(simdef.D3D.dire_sim,'etaw.xyz');
@@ -787,6 +788,7 @@ end
 
 if isfield(simdef.file,'extn')==0
     simdef.file.extn=fullfile(simdef.D3D.dire_sim,'bnd.ext');
+    simdef.mdf.extn='bnd.ext';   
 end
 
 %%
