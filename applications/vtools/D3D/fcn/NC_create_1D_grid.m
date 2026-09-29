@@ -26,14 +26,13 @@ fid_log=parin.Results.fid_log;
 
 %% UNPACK
 
-v2struct(network); %A bit hidden. It unpacks network data
-% network_branch_id=network.network_branch_id; %better to specify each of them?
-
-% network_edge_nodes,network_branch_id,network_edge_length,network_node_id,network_node_x,network_node_y, ...
-%                 network_geom_node_count,network_geom_x,network_geom_y,network_branch_order,network_branch_type, ...
-%                 mesh1d_node_branch,mesh1d_node_offset,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_branch,mesh1d_edge_offset,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_id,mesh1d_node_long_name,mesh1d_edge_nodes ...
+[epsg,network_edge_nodes,network_branch_id,network_branch_long_name,network_edge_length, ...
+    network_node_id,network_node_long_name,network_node_x,network_node_y,network_geom_node_count, ...
+    network_geom_x,network_geom_y,network_branch_order,network_branch_type,mesh1d_node_branch, ...
+    mesh1d_node_offset,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_branch,mesh1d_edge_offset, ...
+    mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_id,mesh1d_node_long_name,mesh1d_edge_nodes]= ...
+    NC_1D_grid_variables('unpack',network);
                 
-
 %% Change cell input to char
 
 strLengthIds=40;
@@ -112,6 +111,7 @@ var_mesh1d_edge_y      = netcdf.defVar(ncid, 'mesh1d_edge_y',netcdf.getConstant(
 var_mesh1d_node_id      = netcdf.defVar(ncid, 'mesh1d_node_id',netcdf.getConstant('NC_CHAR'), [dim_strLengthIds,dim_mesh1d_nNodes]);
 var_mesh1d_node_long_name      = netcdf.defVar(ncid, 'mesh1d_node_long_name',netcdf.getConstant('NC_CHAR'), [dim_strLengthLongNames,dim_mesh1d_nNodes]);
 var_mesh1d_edge_nodes  = netcdf.defVar(ncid, 'mesh1d_edge_nodes',netcdf.getConstant('NC_INT'), [dim_Two dim_mesh1d_nEdges]);
+var_projected_coordinate_system = netcdf.defVar(ncid, 'projected_coordinate_system', netcdf.getConstant('NC_INT'), []);
 
 %fill values
 % netcdf.defVarFill(ncid, var_mesh1d_node_x, false, int32(-9999));
@@ -254,6 +254,19 @@ netcdf.putAtt(ncid, var_mesh1d_edge_nodes, 'cf_role', 'edge_node_connectivity');
 netcdf.putAtt(ncid, var_mesh1d_edge_nodes, 'long_name', 'Start and end nodes of mesh edges');
 netcdf.putAtt(ncid, var_mesh1d_edge_nodes, 'start_index', int32(0));
 
+% --- projected_coordinate_system ---
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'name', 'Unknown projected');
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'epsg', int32(epsg));
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'grid_mapping_name', 'Unknown projected');
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'longitude_of_prime_meridian', 0);
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'semi_major_axis', 6378137);
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'semi_minor_axis', 6356752.314245);
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'inverse_flattening', 298.257223563);
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'EPSG_code', sprintf('EPSG:%d', epsg));
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'value', 'value is equal to EPSG code');
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'proj4_params', '');
+netcdf.putAtt(ncid, var_projected_coordinate_system, 'proj_string', '');
+
 %% Define global attributes
 netcdf.putAtt(ncid, netcdf.getConstant('NC_GLOBAL'), 'institution', 'Deltares');
 netcdf.putAtt(ncid, netcdf.getConstant('NC_GLOBAL'), 'references', 'https://github.com/ugrid-conventions/ugrid-conventions');
@@ -298,6 +311,7 @@ netcdf.putVar(ncid, var_mesh1d_edge_y, mesh1d_edge_y);
 netcdf.putVar(ncid, var_mesh1d_node_id, mesh1d_node_id');
 netcdf.putVar(ncid, var_mesh1d_node_long_name, mesh1d_node_long_name');
 netcdf.putVar(ncid, var_mesh1d_edge_nodes, mesh1d_edge_nodes);
+netcdf.putVar(ncid, var_projected_coordinate_system, int32(epsg));
 
 %% CLOSE
 
