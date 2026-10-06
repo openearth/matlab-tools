@@ -58,10 +58,9 @@ if in_plot_fig.do
 end
 
 %% HFM (history data from map data)
-tag_check='fig_map_2DH_his_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    create_mat_map_2DH_his_01(fid_log,in_plot_fig,simdef)
+in_plot_fig=gdm_check_tag_HFM(in_plot);
+if in_plot_fig.do
+    gdm_create_mat_HFM(fid_log,in_plot_fig,simdef)
 %     in_plot_fig=gmd_tag(in_plot,'fig_map_2DH_01'); %use the same output as for map_2DH 
 %     create_mat_map_2DH_01(fid_log,in_plot_fig,simdef) %create map_2DH mat-files
 %     pp_mat_map_2DH_his_01(fid_log,in_plot_fig,simdef) %postporcess to get his-style data
