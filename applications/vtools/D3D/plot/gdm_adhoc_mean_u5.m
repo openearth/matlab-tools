@@ -99,7 +99,7 @@ for kt=kt_v
             varname=flg_loc.var{kvar};
             var_str=D3D_var_num2str_structure(varname,simdef(1));
             
-            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
 
             for kS=1:nS
                 fdir_mat=simdef(kS).file.fdir_mat;

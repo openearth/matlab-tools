@@ -12,7 +12,7 @@
 %
 %
 
-function layer=gdm_layer(flg_loc,no_layers,var_str,kvar,varname_original)
+function layer=gdm_layer(flg_loc,no_layers,no_bed_layers,var_str,kvar,varname_original) 
         
 if isfield(flg_loc,'layer')==0
     layer=[];
@@ -25,8 +25,12 @@ else
 end
 
 if isnan(layer)
-    layer=no_layers;
-end
+    switch var_str
+        case {'dg','dm'}
+            layer=no_bed_layers;
+        otherwise
+            layer=no_layers;
+    end
 
 %remove the input if makes no sense. Otherwise the filename has the 'layer'.
 layer=gdm_layer_needed(layer,var_str);

@@ -584,7 +584,7 @@ fdir_mat=simdef.file.fdir_mat;
 load(fpath_mat,'data');  
 
 % var_str_original=flg_loc.var{kvar};
-% layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,var_str_original); 
+% layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str_read,kvar,var_str_original); 
 % fdir_mat=simdef.file.fdir_mat;
 % [var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
 % fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,var_idx,layer); %flow time for filename

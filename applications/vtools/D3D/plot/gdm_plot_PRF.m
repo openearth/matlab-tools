@@ -74,7 +74,7 @@ for kpli=1:npli %variable
         varname=flg_loc.var{kvar};
         [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef(1));
         
-        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
         var_idx=flg_loc.var_idx{kvar};
         in_p.frac=var_idx;
 

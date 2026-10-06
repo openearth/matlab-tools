@@ -46,7 +46,7 @@ mkdir_check(fdir_fig);
 %Load here all the grids, which are needed for the layers. 
 for ksim=1:nsim
     fpath_his=simdef(ksim).file.his;
-    gridInfo(ksim)=EHY_getGridInfo(fpath_his,'no_layers');
+    gridInfo(ksim)=EHY_getGridInfo(fpath_his,{'no_layers','no_bed_layers'});
 %     gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
 end
 
@@ -441,7 +441,7 @@ for ksim=1:nsim %simulations
         case 1
             layer=gdm_station_layer(flg_loc,gridInfo(ksim),fpath_his,stations_loc,var_str,elevation); 
         case 2
-            layer=gdm_layer(flg_loc,gridInfo(ksim).no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+            layer=gdm_layer(flg_loc,gridInfo(ksim).no_layers,gridInfo(ksim).no_bed_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
 
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime{ksim}(1),'tim2',time_dtime{ksim}(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));

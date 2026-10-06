@@ -7,6 +7,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 % varargin{1): 	string or cell array of strings with wanted variables
 %               available keyword       returns:
 %               no_layers               E.no_layers
+%               no_bed_layers           E.no_bed_layers
 %               dimensions              E.MNKmax | no_NetNode & no_NetElem
 %               XYcor                   E.Xcor & E.Ycor (=NetNodes)
 %               XYcen                   E.Xcen & E.Ycen (=NetElem/faces)
@@ -258,6 +259,7 @@ switch modelType
                             E.no_layers = 1;
                         end
                     end
+                    E.no_bed_layers=EHY_get_no_bed_layers_from_output(wantedOutput,infonc);
                     if ismember('XYcor',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_node_x');
                         if nc_isvar(inputFile,varName)
@@ -1163,4 +1165,19 @@ XX(nanInd(nanNanInd)) = [];
 YY(nanInd(nanNanInd)) = [];
 grid(:,1) = XX;
 grid(:,2) = YY;
+end
+
+function no_bed_layers=EHY_get_no_bed_layers_from_output(wantedOutput,infonc)
+
+if ismember('no_bed_layers',wantedOutput)
+    ncVarInd = strmatch('nBedLayers',{infonc.Dimensions.Name},'exact');
+    if ~isempty(ncVarInd)
+        no_bed_layers = infonc.Dimensions(ncVarInd).Length;
+    else
+        no_bed_layers = NaN;
+    end
+else
+    no_bed_layers = NaN;
+end
+
 end

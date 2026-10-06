@@ -477,9 +477,9 @@
 % % 1=If there is no intersection, thrown an error. 
 % in_plot.(tag).intersection_type_sb_wb = [1,1]; 
 
-%% his data out of map data
+%% HFM: his data out of map data
 
-% tag='fig_map_2DH_his_01';
+% tag='HFM';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_all_sta=1;
 % in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`

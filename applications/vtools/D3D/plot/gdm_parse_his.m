@@ -22,8 +22,8 @@ flg_loc.n_sim=numel(simdef);
 %% stations
 
 %There are two inputs which are handled the same way:
-%   -his-file
-%   -map_2DH_his
+%   -HIS: his-file
+%   -HFM: his from map
 flg_loc=isfield_default(flg_loc,'his_type',1);        
 flg_loc=isfield_default(flg_loc,'results_type','his');        
 if isfield(flg_loc,'obs')

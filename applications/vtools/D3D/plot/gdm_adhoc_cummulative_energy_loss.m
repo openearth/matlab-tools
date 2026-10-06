@@ -67,7 +67,7 @@ for kvar=1:nvar %variable
     varname=flg_loc.var{kvar};
     var_str=D3D_var_num2str_structure(varname,simdef(1));
     
-    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar});
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str,kvar,flg_loc.var{kvar});
     in_p.str_idx=layer; %maybe it is <var_idx> in other plots. 
     
     for kt=kt_v

@@ -67,7 +67,7 @@ for kvar=1:nvar
     
     varname=flg_loc.var{kvar};
     var_str_read=D3D_var_num2str_structure(varname,simdef);
-    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     
     ktc=0;
     L=NaN(nt,1);

@@ -70,7 +70,7 @@ for kt=kt_v
             varname=flg_loc.var{kvar};
             [varname_save_mat,varname_read_variable,~]=D3D_var_num2str_structure(varname,simdef);
 
-            layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_read_variable,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,varname_read_variable,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
             var_idx=flg_loc.var_idx{kvar};
 
             fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(kt),varname_save_mat,pliname,layer,var_idx);

@@ -66,15 +66,15 @@ for kt=kt_v
     for kvar=1:nvar %variable
         [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
         
-        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
 
         %looping on kobs outside of the time loop would seem more logical, but we would load data kvar*kobs more times. 
         for kobs=1:nobs 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elev(kobs),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
+            fpath_mat_tmp=mat_name_HFM(fdir_mat,tag,flg_loc,kobs,var_str_read,layer,time_dtime,kvar);
 
             %% read data
             if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',flg_loc.tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar),'depth_average',flg_loc.depth_average(kvar),'elevation',flg_loc.elev(kobs),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',flg_loc.tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar),'depth_average',flg_loc.depth_average(kvar),'elevation',flg_loc.elevation(kobs),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
                 [idx_time,dim]=D3D_search_index_in_dimension(data_var,'time');
                 idx_face=D3D_search_index_in_dimension(data_var,'mesh2d_nFaces');
                 data=submatrix(data_var.val,idx_time,1); %remove time
@@ -93,12 +93,12 @@ end %kt
 for kvar=1:nvar
     [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
     
-    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
 
     for kobs=1:nobs
     
         %read
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elev(kobs),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
+        fpath_mat_tmp=mat_name_HFM(fdir_mat,tag,flg_loc,kobs,var_str_read,layer,time_dtime,kvar);
 
         if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
             data=data_his(kobs,:,kvar); %#ok
@@ -113,3 +113,7 @@ end %function
 %% 
 %% FUNCTION
 %%
+
+function fpath_mat_tmp=mat_name_HFM(fdir_mat,tag,flg_loc,obs_idx,var_str_read,layer,time_dtime,kvar)
+fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(obs_idx).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elevation(obs_idx),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
+end

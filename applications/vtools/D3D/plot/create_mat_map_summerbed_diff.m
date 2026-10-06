@@ -100,7 +100,7 @@ for ksb=1:nsb
             for kvar=1:nvar %variable
                 [varname_save_mat,varname_read_variable,varname_load_mat]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
-                layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_save_mat,kvar,flg_loc.var{kvar}); 
+                layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,varname_save_mat,kvar,flg_loc.var{kvar}); 
                 
                 %name of file with new polygon
                 fpath_mat_tmp=gdm_map_summerbed_mat_name(varname_load_mat,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);

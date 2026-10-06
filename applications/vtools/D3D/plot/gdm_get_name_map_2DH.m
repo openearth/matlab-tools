@@ -17,7 +17,7 @@ function [fpath_mat_tmp,var_id,layer,var_idx,sum_var_idx]=gdm_get_name_map_2DH(f
 var_str_original=flg_loc.var{kvar};
 [varname_save_mat,var_id]=D3D_var_num2str_structure(var_str_original,simdef);
 
-layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_save_mat,kvar,var_str_original); %we use <layer> for flow and sediment layers
+layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,varname_save_mat,kvar,var_str_original); %we use <layer> for flow and sediment layers
 [var_idx,sum_var_idx]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
 
 fdir_mat=simdef.file.fdir_mat;
