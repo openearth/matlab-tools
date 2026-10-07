@@ -208,10 +208,14 @@
 % in_plot.(tag).do_all_t_xt=1; %all times together xt
 % in_plot.(tag).do_all_t_xt_diff_t=1; %all times together xt, difference in time
 % in_plot.(tag).var={'bl'}; %list variables: `open D3D_list_of_variables`
-%plot a longitudinal profile of fractions
+%%plot a longitudinal profile of fractions
 % % in_plot.(tag).var={'lyrfrac'}; %list variables: `open D3D_list_of_variables`
 % % in_plot.(tag).var_idx{1}=1;
-% % in_plot.(tag).layer{1}=1:1:52; %Inf takes all the flow layers, but not sediment layers. Specify manually. 
+% % in_plot.(tag).layer{1}=[]; %Empty takes all layers.
+%%plot a longitudinal profile of mean grain size
+% % in_plot.(tag).var={'dm'}; %list variables: `open D3D_list_of_variables`
+% % in_plot.(tag).var_idx{1}=1;
+% % in_plot.(tag).layer{1}=[]; %Empty takes all layers.
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).use_local_time=0; %use the time of each simulation rather than the time of the reference simulation for comparison
 % in_plot.(tag).tim_type=2;

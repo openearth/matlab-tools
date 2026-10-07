@@ -100,7 +100,12 @@ for ktimint=1:ntimint
 
         data_all=cell(nsim,n_sta);
         data_conv=cell(nsim,n_sta);
-        
+
+        ndim4=gdm_HIS_fourth_dimension(flg_loc,gridInfo(1),simdef(1)); %assume all the same...
+        if ndim4>1
+            in_p.do_area=true;
+        end
+
         [flg_loc,in_p]=gdm_group_idx('initialize',fid_log,flg_loc,simdef,varname,in_p);
 
         flg_loc.do_xval=false;
@@ -131,10 +136,10 @@ for ktimint=1:ntimint
             %dimension: data_all{k_sim,k_sta}
     
             %I am not sure this is correct. This does not prevent {1,1}[100,5] to pass. 
-            if ~isvector(size(data_all{1}))
-                messageOut(fid_log,sprintf('Cannot plot more than 1 dimension. There may be more than 1 layer: %s',varname));
-                continue
-            end
+            % if ~isvector(size(data_all{1}))
+            %     messageOut(fid_log,sprintf('Cannot plot more than 1 dimension. There may be more than 1 layer: %s',varname));
+            %     continue
+            % end
     
             %% convergence
             [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,variable,k_sta,data_conv);
@@ -868,3 +873,15 @@ for kclim=1:nclim
 end %kclim
 
 end %function
+
+%%
+
+function bol_do_area=gdm_check_doarea(data_all)
+%Check if the data is suitable for area plotting
+bol_do_area=0;
+if iscell(data_all)
+    if numel(size(data_all{1}))==2 && size(data_all{1},2)>1
+        bol_do_area=1;
+    end
+end
+end

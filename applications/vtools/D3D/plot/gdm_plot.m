@@ -44,10 +44,9 @@ if in_plot_fig.do
     gdm_plot_STO(fid_log,in_plot_fig,simdef)
 end
 
-%% map 2DH his
-tag_check='fig_map_2DH_his_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
+%% HFM (history data from map data)
+in_plot_fig=gdm_check_tag_HFM(in_plot);
+if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     gdm_plot_HIS(fid_log,in_plot_fig,simdef)
 end

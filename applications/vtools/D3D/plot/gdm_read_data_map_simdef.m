@@ -28,7 +28,6 @@ addOptional(parin,'do_load',1);
 addOptional(parin,'tol',1.5e-7);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
-addOptional(parin,'bed_layers',[]);
 addOptional(parin,'sediment_transport',[]);
 addOptional(parin,'depth_average',false);
 addOptional(parin,'elevation',[]);
@@ -125,6 +124,10 @@ switch varname
         data_var=gdm_read_data_map_vorticity(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t,'do_load',do_load); 
     case{'streamfunction','transport_streamfunction'}
         data_var=gdm_read_data_map_streamfunction(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t,'do_load',do_load);
+    case {'dg','dm'}
+        %ATTENTION! there is a distinction between requesting `mesh2d_dg/dm` and `dg/dm` directly.
+        %`mesh2d_dg/dm` refers to the actual 2D mesh output, while `dg/dm` refers to the processed data based on volume fraction content for all layers. 
+        data_var=gdm_read_data_map_mean_grain_size(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);
     otherwise 
         %cases in which the variable name contains information on the analysis
         if ischar(varname) && contains(varname,'cel_morpho')

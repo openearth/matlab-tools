@@ -60,7 +60,10 @@ kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
-data_his=NaN(nobs,nt,nvar);
+
+ndim4=gdm_HIS_fourth_dimension(flg_loc,gridInfo,simdef);
+data_his=NaN(nobs,nt,nvar,ndim4);
+
 for kt=kt_v
     ktc=ktc+1;
     for kvar=1:nvar %variable
@@ -79,7 +82,7 @@ for kt=kt_v
                 idx_face=D3D_search_index_in_dimension(data_var,'mesh2d_nFaces');
                 data=submatrix(data_var.val,idx_time,1); %remove time
                 data=submatrix(data,idx_face,idx_obs(kobs)); %take station we want
-                data_his(kobs,kt,kvar)=squeeze(data); 
+                data_his(kobs,kt,kvar,:)=squeeze(data); 
             end
         end %kobs
 
@@ -101,8 +104,8 @@ for kvar=1:nvar
         fpath_mat_tmp=mat_name_HFM(fdir_mat,tag,flg_loc,kobs,var_str_read,layer,time_dtime,kvar);
 
         if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
-            data=data_his(kobs,:,kvar); %#ok
-            data=data'; %we save it in one column
+            data=data_his(kobs,:,kvar,:); %#ok
+            data=reshape(data,nt,ndim4); %we save it in one column
             save_check(fpath_mat_tmp,'data'); 
         end
     end %kvar
@@ -117,3 +120,5 @@ end %function
 function fpath_mat_tmp=mat_name_HFM(fdir_mat,tag,flg_loc,obs_idx,var_str_read,layer,time_dtime,kvar)
 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(obs_idx).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elevation(obs_idx),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
 end
+
+%%

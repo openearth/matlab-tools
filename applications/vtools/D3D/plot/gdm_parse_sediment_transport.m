@@ -15,7 +15,10 @@
 function flg_loc=gdm_parse_sediment_transport(flg_loc,simdef)
 
 if ~isfield(flg_loc,'sediment_transport')
-    flg_loc.sediment_transport=gdm_struct_sediment_transport();
+    sediment_transport=gdm_struct_sediment_transport();
+    for kvar=1:numel(flg_loc.var)
+        flg_loc.sediment_transport(kvar)=sediment_transport;
+    end
 end
 
 %modify variable names or skip

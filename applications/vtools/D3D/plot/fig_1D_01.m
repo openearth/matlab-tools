@@ -38,6 +38,8 @@ end
 
 %% DEFAULTS
 
+%Input can be cell array!
+
 % Parse inputs explicitly (no v2struct side effects).
 val=isfield_default(in_p,'val',NaN,'output','array');
 s=isfield_default(in_p,'s',NaN,'output','array');

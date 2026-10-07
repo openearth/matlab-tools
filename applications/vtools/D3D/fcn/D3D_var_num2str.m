@@ -175,8 +175,10 @@ if ischar(varname_input)
             end
             varname_save_mat='umod';
             varname_load_mat=varname_save_mat;
-            varname_label=varname_load_mat;
-        case {'mesh2d_dg','mesh1d_dg','dg'}
+            varname_label=varname_load_mat; 
+        case {'mesh2d_dg','mesh1d_dg'} %Do NOT add `dg` directly, use the processed data instead.
+        %ATTENTION! there is a distinction between requesting `mesh2d_dg/dm` and `dg/dm` directly.
+        %`mesh2d_dg/dm` refers to the actual 2D mesh output, while `dg/dm` refers to the processed data.
             if is1d
                 varname_read_variable='mesh1d_dg';
             else
