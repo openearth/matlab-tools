@@ -23,9 +23,17 @@
 %   -FontName if interpreter LaTeX: check post 114116
 %	-When adding text in duration axis, scatter interprets days while surf interprets hours
 
-% in_p.fig_print=; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-% in_p.fname=;
-% in_p.fig_visible=;
+%E.G.
+% in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+% in_p.fname=sprintf('dominant_Q_%s',fname);
+% in_p.fig_visible='off';
+% in_p.fig_overwrite=true;
+% in_p.s={time_datetime,time_datetime,time_datetime};
+% in_p.val={values,Q_dom.*ones(size(values)),Q_mean.*ones(size(values))};
+% in_p.leg_str={'observed','dominant','mean'};
+% in_p.title_str=node;
+% in_p.variable='Q';
+% in_p.leg_loc='northeast';
 
 function varargout=fig_1D_01(in_p)
 
