@@ -109,6 +109,7 @@ else
     do_title=in_p.do_title;
 end
 
+xlab=isfield_default(in_p,'xlab','','output','array');
 xlab_str=isfield_default(in_p,'xlab_str','dist_prof','output','array');
 if isempty(xlab_str)
     xlab_str='dist_prof';
@@ -410,11 +411,21 @@ if do_time
 else
     lims.c(kr,kc,1:2)=NaN;
 end
-if isdatetime(s{1})
-    xlabels{kr,kc}='';
+
+%If we give `xlab`, this is the label.
+if ~isempty(xlab)
+    xlabels{kr,kc}=xlab;
 else
-    xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
+    %If we do not give `xlab`, we determine it based on the type of `s{1}`.
+    if isdatetime(s{1})
+        %If if is a datetime, we do not set a label.
+        xlabels{kr,kc}='';
+    else
+        %Otherwise, we use the provided `xlab_str` (variable name). 
+        xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
+    end
 end
+
 if isempty(ylab)
     if numel(frac)>1
         frac='';

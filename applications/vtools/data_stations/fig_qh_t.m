@@ -23,6 +23,20 @@
 %   -FontName if interpreter LaTeX: check post 114116
 %	-When adding text in duration axis, scatter interprets days while surf interprets hours
 
+%E.G. simple call (more can be done)
+%
+% in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+% in_p.fname=sprintf('qh_%s',name);
+% in_p.fig_visible='off';
+% in_p.fig_overwrite=true;
+% in_p.tim=common_time;
+% in_p.Q=discharge;
+% in_p.H=waterlevel;
+% in_p.station=name;
+% in_p.Lref='AD';
+% in_p.qh_sep{1,1}(:,1)=in_p.Q;
+% in_p.qh_sep{1,1}(:,2)=in_p.H;
+
 function fig_qh_t(in_p)
 
 %%
@@ -53,9 +67,17 @@ end
 if isfield(in_p,'lim_t')==0
     in_p.lim_t=NaN;
 end
+if isfield(in_p,'lim_x')==0
+    in_p.lim_x=NaN;
+end
 if isfield(in_p,'Lref')==0
     in_p.Lref='+NAP';
 end
+in_p=isfield_default(in_p,'station','');
+in_p=isfield_default(in_p,'station_etaw',in_p.station);
+in_p=isfield_default(in_p,'station_q',in_p.station);
+in_p=isfield_default(in_p,'plot_envelope',false);
+in_p=isfield_default(in_p,'plot_central_estimate',false);
 
 %%
 
@@ -63,6 +85,9 @@ v2struct(in_p)
 
 %%
 
+if isnan(lim_x)
+    lim_x=[min(Q),max(Q)];
+end
 if isnan(lim_y)
     lim_y=[min(H),max(H)];
 end
@@ -320,8 +345,10 @@ if plot_envelope
     end
 end
 for kt=1:nt
+    if plot_central_estimate
 % han.p2(kr,kc,kd)=errorbar(q_u_mean{1,kd}(:,1),q_u_mean{1,kd}(:,2)./100,q_u_mean{1,kd}(:,3)./100,'parent',han.sfig(kr,kc),'color',prop.color2(kd,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kd},'marker',prop.m1);
 han.p2(kr,kc,kt)=plot(qh_cen{1,kt},qh_mean{1,kt},'parent',han.sfig(kr,kc),'color',prop.color2(kt,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kt},'marker',prop.m1);
+    end
 % pause
 end
 
