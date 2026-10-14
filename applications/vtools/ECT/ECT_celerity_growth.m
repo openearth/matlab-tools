@@ -43,6 +43,7 @@ for kc=1:nc
     eig_r_morph(kc,:)=eig_r(kc,p_s(kc,1:ne-3));
 end
 
-c_anl=max(eig_r_morph)./in_2D.kwx_v;
+c_anl=max(eig_r_morph)./in_2D.kwx_v; %In 2D this is not correct!
+% c_anl=max(eig_r_morph)./sqrt(in_2D.kwx_v^2+in_2D.kwy_v^2); %this, I am not sure. 
 
 end %function
