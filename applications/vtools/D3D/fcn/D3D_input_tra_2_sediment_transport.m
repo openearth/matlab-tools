@@ -20,6 +20,8 @@ tra=NaN(size(IFORM));
 
 for kf=1:nf
     switch IFORM(kf)
+        case 1
+            tra(kf)=2;
         case 4
             tra(kf)=1;
         case 14
