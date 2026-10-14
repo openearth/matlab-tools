@@ -58,7 +58,7 @@ nvar=numel(flg_loc.var);
 
 %% GRID
 
-gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map,'save_format',flg_loc.save_format);
 
 %% OVERWRITE
 
@@ -84,18 +84,13 @@ for kt=kt_v
         
         [fpath_mat_tmp,var_id,layer,var_idx,sum_var_idx]=gdm_get_name_map_2DH(flg_loc,simdef,gridInfo,kvar,tag,time_dnum(kt));
 
-        fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
-
+        %% read data
+        
         do_read=1;
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
             do_read=0;
         end
-        do_shp=0;
-        if flg_loc.write_shp && (exist(fpath_shp_tmp,'file')~=2 || do_read==1)
-            do_shp=1;
-        end
 
-        %% read data
         if do_read
             data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx,'layer',layer,'tol',flg_loc.tol,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar),'tol_t',flg_loc.tim_tol);      
             data=squeeze(data_var.val); 
@@ -103,6 +98,13 @@ for kt=kt_v
         end
 
         %% shp
+
+        fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
+        do_shp=0;
+        if flg_loc.write_shp && (exist(fpath_shp_tmp,'file')~=2 || do_read==1)
+            do_shp=1;
+        end
+
         if do_shp
             if ~do_read
                 load(fpath_mat_tmp,'data')
@@ -110,6 +112,18 @@ for kt=kt_v
             messageOut(fid_log,sprintf('Starting to write shp: %s',fpath_shp_tmp));
             shapewrite(fpath_shp_tmp,'polygon',polygons,reshape(data,[],1));
 %             messageOut(fid_log,sprintf('Finished to write shp: %s',fpath_shp_tmp)); %next message is sufficient
+        end
+
+        %% netcdf
+
+        fpath_netcdf_tmp=strrep(fpath_mat_tmp,'.mat','.nc');
+        do_netcdf=0;
+        if any(strcmp(flg_loc.save_format,'netcdf')) && (exist(fpath_netcdf_tmp,'file')~=2 || do_read==1)
+            do_netcdf=1;
+        end
+
+        if do_netcdf
+            gdm_write_M2D_netcdf(fpath_netcdf_tmp,data);
         end
         
         %% velocity

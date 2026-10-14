@@ -37,6 +37,7 @@ flg_loc=isfield_default(flg_loc,'xlims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'measurements','');
 flg_loc=isfield_default(flg_loc,'tim_tol',1); %1 day to match
+flg_loc=isfield_default(flg_loc,'save_format',{'mat'});
 
 flg_loc=isfield_default(flg_loc,'write_shp',0);
 if flg_loc.write_shp==1

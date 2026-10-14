@@ -25,6 +25,7 @@ addOptional(parin,'simdef',NaN);
 addOptional(parin,'disp',1);
 addOptional(parin,'vorticity',false);
 addOptional(parin,'laplacian',false);
+addOptional(parin,'save_format',{'mat'});
 
 parse(parin,varargin{:});
 
@@ -35,6 +36,9 @@ simdef=parin.Results.simdef;
 do_disp=parin.Results.disp;
 vorticity=parin.Results.vorticity;
 laplacian=parin.Results.laplacian;
+save_format=parin.Results.save_format;
+
+fpath_netcdf=strrep(fpath_grd,'.mat','.nc');
 
 %% check dimensions
 
@@ -107,6 +111,9 @@ if exist(fpath_grd,'file')==2
             gridInfo.laplacian=D3D_compute_streamfunction_Laplacian(gridInfo.edge_faces,gridInfo.Xcen,gridInfo.Ycen,gridInfo.edge_length);
             save_check(fpath_grd,'gridInfo'); 
         end
+        if any(strcmp(save_format,'netcdf')) && exist(fpath_netcdf,'file')~=2
+            gdm_save_grid_netcdf(fpath_netcdf,gridInfo);
+        end
     else
         if do_disp
             messageOut(fid_log,'Grid mat-file exist.')
@@ -133,6 +140,7 @@ else
             end
         case 2
             gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes','face_nodes_xy','XYcen','XYcor','no_layers','no_bed_layers','grid','edge_nodes','XYuv'},'mergePartitions',1);   
+            gridInfo.EPSG=D3D_epsg(fpath_map);
             if structure==2
                 data_edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
                 gridInfo.edge_faces=data_edge_faces.val.';
@@ -181,5 +189,11 @@ end
 %% SAVE
 
 save_check(fpath_grd,'gridInfo'); 
+
+%% SAVE netcdf
+
+if any(strcmp(save_format,'netcdf')) && exist(fpath_netcdf,'file')~=2
+    gdm_save_grid_netcdf(fpath_netcdf,gridInfo);
+end
 
 end %function
