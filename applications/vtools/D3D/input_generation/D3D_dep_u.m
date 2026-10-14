@@ -22,6 +22,19 @@
 %   -
 %
 
+% E.G.:
+%
+% simdef.file.dep=fullfile(pwd,'../../r002/dep.xyz');
+% simdef.file.grd=fullfile(pwd,'../../r002/grd_net.nc');
+% simdef.grd.B=1.5;
+% simdef.ini.etab=0; 
+% simdef.ini.s=1.5/1000; 
+% simdef.grd.L=200; 
+% simdef.ini.etab0_type=1; %sloping bed
+% simdef.file.exe_grd2map='c:\checkouts\sc_fm_trunk\install_fm-suite_release\x64\bin\run_dimr.bat';
+% simdef.ini.etab_noise=0;
+
+
 function D3D_dep_u(simdef)
 %% RENAME
 
