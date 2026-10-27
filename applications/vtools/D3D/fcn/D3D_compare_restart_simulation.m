@@ -80,9 +80,9 @@ end
 
 %modify reference simulation
     %mdf
-simdef_main=D3D_simpath(fpath_main);
+simdef_main=D3D_simpath(fpath_main,'store_mat',false);
 mdf_main=D3D_io_input('read',simdef_main.file.mdf);
-TFact=time_factor(mdf_main.time.Tunit); %TUnit->s
+TFact=time_factor(mdf_main.Time.tUnit); %TUnit->s
 
 if isfield(simdef_main.file,'mor')
     if exist(simdef_main.file.mor,'file')==2
@@ -93,7 +93,7 @@ if isfield(simdef_main.file,'mor')
             mor.Morphology0.CmpUpdStt = mor.Morphology0.MorStt;
             mor.Morphology0=rmfield(mor.Morphology0, 'MorStt'); 
         end
-        DTUser_fact = max(DTUser_fact,ceil(mor.Morphology0.BedUpdStt*TFact/mdf_main.time.DtUser));
+        DTUser_fact = max(DTUser_fact,ceil(mor.Morphology0.BedUpdStt*TFact/mdf_main.Time.dtUser));
         if (DTUser_fact_old ~= DTUser_fact)
             warning('DTUser_fact is updated to %i to ensure restart time starts after BedUpdStt', DTUser_fact);
         end
@@ -104,25 +104,25 @@ if isfield(simdef_main.file,'mor')
     end
 end
 
-if (DTUser_fact >= mdf_main.time.TStop*TFact/mdf_main.time.DtUser) 
+if (DTUser_fact >= mdf_main.Time.tStop*TFact/mdf_main.Time.dtUser) 
     DTUser_fact_old = DTUser_fact;
-    DTUser_fact = floor(mdf_main.time.TStop*TFact/mdf_main.time.DtUser/2);
+    DTUser_fact = floor(mdf_main.Time.tStop*TFact/mdf_main.Time.dtUser/2);
     if (DTUser_fact_old ~= DTUser_fact)
         warning('DTUser_fact is reduced to %i such that restart occurs before TStop/2', DTUser_fact);
     end
 end
     
-if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
-    DtUser_maxMultiple=(mdf_main.time.TStop*TFact-mdf_main.time.TStart*TFact)/mdf_main.time.DtUser;
+if mdf_main.Time.dtUser*DTUser_fact ~= round(mdf_main.Time.dtUser*DTUser_fact)
+    DtUser_maxMultiple=(mdf_main.Time.tStop*TFact-mdf_main.Time.tStart*TFact)/mdf_main.Time.dtUser;
     DtUser_MultipleSecondsCheck = (DTUser_fact:DtUser_maxMultiple);
-    potential_restart_times = mdf_main.time.TStart*TFact+DtUser_MultipleSecondsCheck*DTUser_fact*mdf_main.time.DtUser; 
+    potential_restart_times = mdf_main.Time.tStart*TFact+DtUser_MultipleSecondsCheck*DTUser_fact*mdf_main.Time.dtUser; 
     DtUser_SecondsIndex = find(potential_restart_times==round(potential_restart_times),1);
     DTUser_fact = DtUser_MultipleSecondsCheck(DtUser_SecondsIndex);
     warning('DTUser_fact is updated to %i to ensure restart time is in whole seconds', DTUser_fact);
 end
-mdf_main.output.RstInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
-mdf_main.output.MapInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
-mdf_main.time.TStop = mdf_main.time.TStart+2*mdf_main.output.MapInterval/TFact;  %[Tunit]
+mdf_main.output.RstInterval=mdf_main.Time.dtUser*DTUser_fact; %[s]
+mdf_main.output.MapInterval=mdf_main.Time.dtUser*DTUser_fact; %[s]
+mdf_main.Time.tStop = mdf_main.Time.tStart+2*mdf_main.output.MapInterval/TFact;  %[Tunit]
 
 mdf_main.output.Wrirst_bnd=1;
 mdf_main.geometry.UseCaching=0;
@@ -138,7 +138,7 @@ end
 
 %modify restart simulation
     %mdf
-simdef_rst=D3D_simpath(fpath_rst); 
+simdef_rst=D3D_simpath(fpath_rst,'store_mat',false); 
 mdf_rst=D3D_io_input('read',simdef_rst.file.mdf);
 
 %`TStart_rst` is the time at which the restarted simulation starts. 
@@ -147,13 +147,13 @@ if isnan(TStart_rst_fact)
     TStart_rst=mdf_main.output.RstInterval/TFact; %[TUnit] 
 else
     %Restart `TStart_rst_fact` times `DtUser`. The user is responsible from setting a break point after the right restart file is created. 
-    TStart_rst=TStart_rst_fact*mdf_rst.time.DtUser/TFact; %[TUnit]
+    TStart_rst=TStart_rst_fact*mdf_rst.Time.dtUser/TFact; %[TUnit]
 end
-mdf_rst.time.TStart=mdf_main.time.TStart+TStart_rst; %[TUnit]
-mdf_rst.time.TStartTlfsmo=mdf_main.time.TStart;
+mdf_rst.Time.tStart=mdf_main.Time.tStart+TStart_rst; %[TUnit]
+mdf_rst.Time.tStartTlfsmo=mdf_main.Time.tStart;
 
-rst_time_s=seconds(mdf_rst.time.TStart*TFact);
-rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+rst_time_s; 
+rst_time_s=seconds(mdf_rst.Time.tStart*TFact);
+rst_time_dtime=datetime(num2str(mdf_rst.Time.refDate),'InputFormat','yyyyMMdd')+rst_time_s; 
 rst_time_str=string(rst_time_dtime,'yyyyMMdd_HHmmss');
 mdf_rst.restart.RestartFile=sprintf('%s_%s_rst.nc',simdef_rst.file.mdfid,rst_time_str); %tst_20140819_120000_rst.nc
 mdf_rst.restart = rmfield(mdf_rst.restart,'RestartDateTime');
@@ -163,10 +163,10 @@ D3D_io_input('write',simdef_rst.file.mdf,mdf_rst);
 if isfield(simdef_rst.file,'mor')
     if exist(simdef_main.file.mor,'file')==2
         mor=D3D_io_input('read',simdef_rst.file.mor);
-        mor.Morphology0.BedUpdStt=max([0,mor.Morphology0.BedUpdStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
-        mor.Morphology0.CmpUpdStt=max([0,mor.Morphology0.CmpUpdStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+        mor.Morphology0.BedUpdStt=max([0,mor.Morphology0.BedUpdStt-(mdf_rst.Time.tStart-mdf_main.Time.tStart)]); %`MorStt` in [TUnit]
+        mor.Morphology0.CmpUpdStt=max([0,mor.Morphology0.CmpUpdStt-(mdf_rst.Time.tStart-mdf_main.Time.tStart)]); %`MorStt` in [TUnit]
         if isfield(mor.Morphology0,'SedTransStt')
-            mor.Morphology0.SedTransStt=max([0,mor.Morphology0.SedTransStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+            mor.Morphology0.SedTransStt=max([0,mor.Morphology0.SedTransStt-(mdf_rst.Time.tStart-mdf_main.Time.tStart)]); %`MorStt` in [TUnit]
         end
         D3D_io_input('write',simdef_rst.file.mor,mor);
     end
@@ -367,7 +367,7 @@ fprintf(fid,'echo set print elements 0 > test_type.gdb \n');
 fprintf(fid,'echo set print repeats 0 >> test_type.gdb \n');
 fprintf(fid,'echo set pagination off >> test_type.gdb \n');
 fprintf(fid,'echo set logging file logs/type.log >> test_type.gdb \n');
-fprintf(fid,'echo set logging on >> test_type.gdb \n');
+fprintf(fid,'echo set logging enabled on >> test_type.gdb \n');
 fprintf(fid,'sed ''s/0x0.*\\bm_\\([a-z0-9_]*\\)_mp_\\([a-z0-9_]*\\)_\\($*.*\\)/echo m_\\1::\\2\\\\n\\nwhatis m_\\1::\\2/g'' logs/list.log >> test_type.gdb \n');
 fprintf(fid,'sed -i ''s/All variables matching regular expression.*//g'' test_type.gdb \n');
 fprintf(fid,'sed -i ''s/Non-debugging symbols://g'' test_type.gdb \n');
@@ -380,7 +380,7 @@ fprintf(fid,'echo set print elements 0 > test_print.gdb \n');
 fprintf(fid,'echo set print repeats 0 >> test_print.gdb \n');
 fprintf(fid,'echo set pagination off >> test_print.gdb \n');
 fprintf(fid,'echo set logging file logs/print.log >> test_print.gdb \n');
-fprintf(fid,'echo set logging on >> test_print.gdb \n');
+fprintf(fid,'echo set logging enabled on >> test_print.gdb \n');
 fprintf(fid,'echo set max-value-size unlimited >> test_print.gdb \n');
 fprintf(fid,'sed -z ''s/\\([a-z0-9_:]*\\)\\ntype = PTR TO -> [\\*:()a-zA-Z0-9 ,]*/echo \\1\\\\n\\nwhatis \\1\\nprint *\\1/g'' logs/type.log >> test_print.gdb \n');
 fprintf(fid,'sed -i -z ''s/\\([a-z0-9_:]*\\)\\ntype = <object is not a[a-z]*ated>\\n//g'' test_print.gdb \n');
@@ -408,7 +408,7 @@ fprintf(fid,'set print elements 0 \n');
 fprintf(fid,'set print repeats 0 \n');
 fprintf(fid,'set pagination off \n');
 fprintf(fid,'set logging file logs/create.log \n');
-fprintf(fid,'set logging on \n');
+fprintf(fid,'set logging enabled on \n');
 
 %read
 if isempty(fpath_cmd)
@@ -444,7 +444,7 @@ fprintf(fid,'set print elements 0 \n');
 fprintf(fid,'set print repeats 0 \n');
 fprintf(fid,'set pagination off \n');
 fprintf(fid,'set logging file logs/list.log \n');
-fprintf(fid,'set logging on \n');
+fprintf(fid,'set logging enabled on \n');
 % fprintf(fid,'info variable m_flow_mp_ \n');
 % fprintf(fid,'info variable m_flowtimes_mp_ \n');
 % fprintf(fid,'info variable m_cell_geometry_mp_ \n');

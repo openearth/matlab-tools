@@ -35,12 +35,14 @@ parin=inputParser;
 addOptional(parin,'break',1);
 addOptional(parin,'break_paths_smt',0);
 addOptional(parin,'overwrite',0);
+addOptional(parin,'store_mat',1)
 
 parse(parin,varargin{:})
 
 do_break=parin.Results.break;
 do_break_paths_smt=parin.Results.break_paths_smt;
 overwrite=parin.Results.overwrite;
+store_mat=parin.Results.store_mat;
 
 %% MAKE DIR
 
@@ -72,19 +74,19 @@ if strcmp(simdef.D3D.dire_sim(end),filesep)
 end
 
 %% check if file exists and use
-
-fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
-if exist(fpath_simdef,'file')==2 && ~overwrite 
-    messageOut(NaN,sprintf('`simdef` file exists. Loading: %s', fpath_simdef));
-    load(fpath_simdef,'simdef');
-    simdef.D3D.dire_sim=adapt_path_local_machine(simdef.D3D.dire_sim);
-    %We may have written the file in Windows and run in Linux or viceversa.
-    simdef.file=adapt_paths_smt(simdef.file,0,@adapt_path_local_machine);
-    % fprintf('DEBUG: simdef.D3D.dire_sim: %s \n', simdef.D3D.dire_sim);
-    % fprintf('DEBUG: simdef.file.map: %s \n', simdef.file.map);
-    return
+if store_mat
+    fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
+    if exist(fpath_simdef,'file')==2 && ~overwrite 
+        messageOut(NaN,sprintf('`simdef` file exists. Loading: %s', fpath_simdef));
+        load(fpath_simdef,'simdef');
+        simdef.D3D.dire_sim=adapt_path_local_machine(simdef.D3D.dire_sim);
+        %We may have written the file in Windows and run in Linux or viceversa.
+        simdef.file=adapt_paths_smt(simdef.file,0,@adapt_path_local_machine);
+        % fprintf('DEBUG: simdef.D3D.dire_sim: %s \n', simdef.D3D.dire_sim);
+        % fprintf('DEBUG: simdef.file.map: %s \n', simdef.file.map);
+        return
+    end
 end
-
 %%
 
 dire=dir(simdef.D3D.dire_sim);
@@ -216,7 +218,9 @@ throw_error(do_break,simdef.err)
 %%
 
 try
-    save(fpath_simdef,'simdef');
+    if store_mat
+        save(fpath_simdef,'simdef');
+    end
     % messageOut(NaN,sprintf('`simdef` variable saved: %s',fpath_simdef))
 catch err
     messageOut(NaN,'Cannot save `simdef` variable. The folder may be protected.')
