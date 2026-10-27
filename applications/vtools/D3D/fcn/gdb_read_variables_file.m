@@ -15,6 +15,8 @@
 %   -First line with variable name. 
 %       -Double colon (::) separates module name from variable name.
 %   -Second line with variable type.
+%       -Kind may use parentheses (REAL(8)) or an asterisk (REAL*8).
+%       -An optional ", allocatable" attribute is ignored.
 %       -Last parenthesis has dimensions.
 %   -Third with value(s).
 %       -Dollar symbol and integer for variable number followed by equal sign and values. 
@@ -24,6 +26,14 @@
 %m_flow::voltot
 %type = REAL(8) (40)
 %$312 = (12523863.333103318, 23863.333103317767, -7409.2358047277767, 16237081.164116737, 16205808.595208693, 31272.568908045545, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+%m_flow::voltot
+%type = REAL*8 (40)
+%$6 = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+% m_flow::s1
+% type = REAL*8, allocatable (9)
+% $1 = (0.047061126544493126, 0.047136215966549183, 0.048465559609920411, 0.047247493431428159, 0.048493856271271618, 0.049839564512532283, 0.047377331135816929, 0.048577490255374778, 0.049882536402538785)
 
 function data=gdb_read_variables_file(fpath_in,varargin)
 
@@ -81,17 +91,13 @@ end %function
 
 function [size_array,str_type]=fcn_size_array(lin)
 
-tok=regexp(lin,'=','split');
+tok=regexp(lin,'\s*=\s*','split');
 if numel(tok)~=2
     error('One and only one equal is expected: %s',lin);
 end %error
 %remove type
 str_aux=tok{1,2};
-tok=regexp(str_aux,'([^\d\s]+\(\d*\))','tokens'); %INTEGER(4)
-if isempty(tok)
-    tok=regexp(str_aux,'([^\d\s]+\*\d*)','tokens'); %character*100 (40) -> character*100
-%     tok=regexp(str_aux,'([^\d\(\)\s\*]+)','tokens'); %character*100 (40) -> character
-end
+tok=regexp(str_aux,'([^\d\s]+(?:\(\d*\)|\*\d+))','tokens'); %INTEGER(4), REAL*8, character*100
 %cycle structures
 % if isempty(tok)
 %     if strcmp(str_aux(2:5),'Type')
@@ -106,6 +112,7 @@ if numel(tok{1,1})~=1
 end
 str_type=tok{1,1}{1,1};
 str_aux=strrep(str_aux,str_type,'');
+str_aux=regexprep(str_aux,',\s*allocatable\>','','ignorecase');
 %remove PTR
 str_aux=strrep(str_aux,'PTR TO ->','');
 %remove parenthesis
