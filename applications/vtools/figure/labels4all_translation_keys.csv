@@ -118,3 +118,5 @@ streamfunction,stream function,stroomfunctie,función de corriente,L2/T
 transport_streamfunction,transport stream function,transpoortstroomfunctie,función de transporte de corriente,L3/T
 age,age,leeftijd,edad,T
 hidexp,hiding-exposure factor for fraction %d,verbergings-blootstellingsfactor voor fractie %d,factor de ocultación-exposición en fracción %d,-
+crest_level,crest level,damhoogte,altura de la cresta,Lref
+gate_height,gate height,sluishoogte,altura de la compuerta,Lref
