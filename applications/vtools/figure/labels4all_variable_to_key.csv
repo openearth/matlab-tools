@@ -149,3 +149,5 @@ waveheight,wave_height
 mesh2d_hwav,wave_height
 pp1d,peak_wave_period
 mwd,mean_wave_direction
+general_structure_crest_level,crest_level
+general_structure_gate_height,gate_height

@@ -106,6 +106,8 @@ for ksb=1:nsb %summerbed polygons
             in_p.do_area=flg_loc.do_area(kvar);
             in_p.tol=flg_loc.tol(kvar);
 
+            [flg_loc,in_p]=gdm_group_idx('initialize',fid_log,flg_loc,simdef,var_str_original,in_p);
+
             [var_str_read,~,var_str_save,varname_label]=D3D_var_num2str_structure(var_str_original,simdef(1));
                        
             %time 0 of all simulations (their time 0, it can be different
@@ -582,6 +584,7 @@ function data=load_data(flg_loc,gridInfo,simdef,time_dnum_kt,var_str_read,var_st
 fdir_mat=simdef.file.fdir_mat;
 [fpath_mat,~,varname_read_variable,layer,var_idx,sum_var_idx]=gdm_map_summerbed_mat_name_build(flg_loc,kvar,simdef,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,gridInfo);
 load(fpath_mat,'data');  
+data=gdm_group_idx('group',NaN,flg_loc,simdef,data,flg_loc.var{kvar});
 
 % var_str_original=flg_loc.var{kvar};
 % layer=gdm_layer(flg_loc,gridInfo.no_layers,gridInfo.no_bed_layers,var_str_read,kvar,var_str_original); 
@@ -629,6 +632,10 @@ end %function
 
 function fcn_plot(flg_loc,in_p,fid_log,simdef,tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,ylims)
 
+if isfield(in_p,'group_idx_classes') && ~isempty(in_p.group_idx_classes)
+    in_p.leg_str=grouped_legend(in_p.leg_str,in_p.group_idx_classes);
+end
+
 tag_fig=flg_loc.tag;
 fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie); 
 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
@@ -650,6 +657,32 @@ for kylim=1:nylim
         fig_1D_01(in_p);
     end
 end
+end %function
+
+%%
+
+function leg_str=grouped_legend(base_leg_str,class_names)
+
+if isempty(base_leg_str)
+    leg_str=class_names;
+    return
+end
+if ~iscell(base_leg_str)
+    error('The base legend for grouped sediment classes must be a cell array.')
+end
+
+leg_str=cell(1,numel(base_leg_str)*numel(class_names));
+for kb=1:numel(base_leg_str)
+    for kc=1:numel(class_names)
+        kleg=(kb-1)*numel(class_names)+kc;
+        if numel(base_leg_str)==1
+            leg_str{kleg}=class_names{kc};
+        else
+            leg_str{kleg}=sprintf('%s: %s',base_leg_str{kb},class_names{kc});
+        end
+    end
+end
+
 end %function
 
 %%

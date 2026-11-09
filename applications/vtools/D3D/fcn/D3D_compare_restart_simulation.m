@@ -297,20 +297,20 @@ if strcmp(str,'rst') %if restart file
     fprintf(fid,'if [ $tunitm == 1 ]; then \n');
     fprintf(fid,'    echo "minutes" \n');
     fprintf(fid,'	tstart=$tstartrstnc \n');
-    fprintf(fid,'	tstart=$(echo $tstartrstnc/60.0 | bc -l) \n');
+    fprintf(fid,'	tstart=$(awk -v value="$tstartrstnc" ''BEGIN { printf "%%.15g\\n\", value / 60.0 }'') \n');
     fprintf(fid,'fi \n');
     fprintf(fid,'if [ $tunith == 1 ]; then \n');
     fprintf(fid,'    echo "hours" \n');
     fprintf(fid,'	tstart=$tstartrstnc \n');
-    fprintf(fid,'	tstart=$(echo $tstartrstnc/3600.0 | bc -l) \n');
+    fprintf(fid,'	tstart=$(awk -v value="$tstartrstnc" ''BEGIN { printf "%%.15g\\n\", value / 3600.0 }'') \n');
     fprintf(fid,'fi \n');
     fprintf(fid,'if [ $tunitd == 1 ]; then \n');
     fprintf(fid,'    echo "days" \n');
     fprintf(fid,'	tstart=$tstartrstnc \n');
-    fprintf(fid,'	tstart=$(echo $tstartrstnc/86400.0 | bc -l) \n');
+    fprintf(fid,'	tstart=$(awk -v value="$tstartrstnc" ''BEGIN { printf "%%.15g\\n\", value / 86400.0 }'') \n');
     fprintf(fid,'fi \n');
     fprintf(fid,'echo $tstart \n');
-    fprintf(fid,'sed -i "s/tstart *=.*/TStart = $tstart/I" %s \n',fname_mdu);
+    fprintf(fid,'sed -i "s/tstart *=.*/tStart = $tstart/I" %s \n',fname_mdu);
     fprintf(fid,'module unload netcdf  \n');   
 end
 fprintf(fid,'./../create_core.sh           \n');
