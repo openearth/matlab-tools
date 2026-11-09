@@ -86,9 +86,8 @@ end
 fig=figure;
 set(fig,'Visible','off');
 
-fh = get(fig,'JavaFrame'); % Get Java Frame
 if exist('iconFile','var')
-    fh.setFigureIcon(javax.swing.ImageIcon(iconFile));
+    setFigureIcon(fig,iconFile);
 end
 
 set(fig,'menubar','none');

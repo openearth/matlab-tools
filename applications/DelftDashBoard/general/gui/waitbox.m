@@ -167,8 +167,7 @@ end
 set(f,'HandleVisibility','callback','visible','on');
 
 if ~isempty(figureiconfile)
-        fh = get(f,'JavaFrame'); % Get Java Frame
-        fh.setFigureIcon(javax.swing.ImageIcon(figureiconfile));
+        setFigureIcon(f,figureiconfile);
 end
 
 set(0, 'Units', oldRootUnits);

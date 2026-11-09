@@ -3,3 +3,10 @@ docs/OpenEarthDocs/oethelpdocs/helpsearch-v4_en/index_meta.json
 docs/OpenEarthDocs/oethelpdocs/helpsearch-v4_en/store/root.bolt
 *.asv
 applications/DelftDashBoard/complist
+applications/DelftDashBoard/exe/bin/DelftDashBoard.exe
+applications/DelftDashBoard/exe/bin/includedSupportPackages.txt
+applications/DelftDashBoard/exe/bin/buildresult.json
+applications/DelftDashBoard/exe/bin/mccExcludedFiles.log
+applications/DelftDashBoard/exe/bin/readme.txt
+applications/DelftDashBoard/exe/bin/requiredMCRProducts.txt
+applications/DelftDashBoard/exe/bin/unresolvedSymbols.txt

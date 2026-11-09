@@ -74,8 +74,7 @@ handles.backgroundColor=get(h,'Color');
 
 figure(h);
 
-fh = get(h,'JavaFrame'); % Get Java Frame
-fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir filesep 'icons' filesep 'deltares.gif']));
+setFigureIcon(h,[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 set(h,'toolbar','figure');
 set(h,'Tag','MainWindow');

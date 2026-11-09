@@ -57,7 +57,7 @@ warning('off','all')
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-handles.delftDashBoardVersion=['2.04.' num2str(Revision)];
+handles.delftDashBoardVersion=['2.06.' num2str(Revision)];
 handles.matlabVersion=version;
 handles.debugMode=0;
 
@@ -119,13 +119,24 @@ try
     drawnow;
         
     %maximizeWindow('Delft Dashboard');
-    set(gcf,'WindowState','maximized');
-    
-    pause(0.1);
-    
-    ddb_resize;
-    
     set(handles.GUIHandles.mainWindow,'Visible','on');
+    set(handles.GUIHandles.mainWindow,'WindowState','maximized');
+
+    % Web-based figures (R2025a+) maximize asynchronously, so wait until
+    % the Position has actually changed before laying out the panels
+    pos0=get(handles.GUIHandles.mainWindow,'Position');
+    t0=tic;
+    while toc(t0)<5
+        drawnow;
+        pos=get(handles.GUIHandles.mainWindow,'Position');
+        if ~isequal(pos,pos0)
+            break
+        end
+        pause(0.05);
+    end
+    pause(0.1);
+
+    ddb_resize;
 
     drawnow;
     

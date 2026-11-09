@@ -63,7 +63,7 @@ function ddb_resize(src, evt)
 %%
 handles=getHandles;
 
-sz=get(gcf,'Position');
+sz=get(handles.GUIHandles.mainWindow,'Position');
 
 screensize=get(0,'ScreenSize');
 
@@ -73,7 +73,7 @@ if sz(3)<1040 || sz(4)<600
     if sz(2)+sz(4)>screensize(4)-60
         sz(2)=screensize(4)-sz(4)-60;
     end
-    set(gcf,'Position',sz);
+    set(handles.GUIHandles.mainWindow,'Position',sz);
 end
 
 ihres=0;

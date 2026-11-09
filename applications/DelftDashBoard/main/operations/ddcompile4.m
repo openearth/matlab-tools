@@ -101,6 +101,15 @@ fid=fopen([inipath 'complist'],'wt');
 fprintf(fid,'%s\n','-a');
 % Add the main script
 fprintf(fid,'%s\n','DelftDashBoard.m');
+% Add all m files in the main folder. Some of these (e.g. menu callbacks
+% created with str2func) are not found by the dependency analysis.
+files=ddb_findAllFiles([inipath 'main'],'*.m');
+for i=1:length(files)
+    [~,name]=fileparts(files{i});
+    if isempty(strfind(lower(name),'compile'))
+        fprintf(fid,'%s\n',files{i});
+    end
+end
 
 % Make a temporary directory for compiled settings
 mkdir([inipath 'ddbsettings']);
