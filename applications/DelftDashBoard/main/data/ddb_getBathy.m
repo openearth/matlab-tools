@@ -406,8 +406,8 @@ switch lower(tp)
             gridsize=handles.bathymetry.dataset(iac).zoomLevel(iacz).gridCellSize;
             
             if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
-                tilesize=dms2degrees(tilesize);
-                gridsize=dms2degrees(gridsize);
+                tilesize=ddb_dms2degrees(tilesize);
+                gridsize=ddb_dms2degrees(gridsize);
             end
             
             x0=tilesize*floor(xl(1)/tilesize);
